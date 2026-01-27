@@ -1,0 +1,25 @@
+<!-- views/02_alerts.ejs -->
+<% if (typeof messages !== "undefined" && messages) { %>
+
+  <% if (messages.success && messages.success.length) { %>
+    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+      <strong>Success:</strong> <%= messages.success[0] %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  <% } %>
+
+  <% if (messages.error && messages.error.length) { %>
+    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+      <strong>Error:</strong> <%= messages.error[0] %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  <% } %>
+
+  <% if (messages.info && messages.info.length) { %>
+    <div class="alert alert-info alert-dismissible fade show shadow-sm" role="alert">
+      <strong>Info:</strong> <%= messages.info[0] %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  <% } %>
+
+<% } %>

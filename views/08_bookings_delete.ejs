@@ -1,0 +1,48 @@
+<!-- views/08_bookings_delete.ejs -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="h4 mb-0">Confirm Delete</h2>
+  <a class="btn btn-outline-secondary" href="/bookings">Back</a>
+</div>
+
+<div class="alert alert-warning shadow-sm">
+  Are you sure you want to delete booking <strong>#<%= booking.bookingId %></strong>?
+  This action cannot be undone.
+</div>
+
+<div class="card shadow-sm rounded-4">
+  <div class="card-body">
+    <div class="row g-3">
+      <div class="col-md-3">
+        <div class="text-muted small">bookingDate</div>
+        <div class="fw-semibold"><%= booking.bookingDate ? String(booking.bookingDate).slice(0,10) : "-" %></div>
+      </div>
+      <div class="col-md-3">
+        <div class="text-muted small">startTime</div>
+        <div class="fw-semibold"><%= booking.startTime %></div>
+      </div>
+      <div class="col-md-3">
+        <div class="text-muted small">endTime</div>
+        <div class="fw-semibold"><%= booking.endTime %></div>
+      </div>
+      <div class="col-md-3">
+        <div class="text-muted small">status</div>
+        <div class="fw-semibold"><%= booking.status %></div>
+      </div>
+      <div class="col-md-6">
+        <div class="text-muted small">ownerId</div>
+        <div class="fw-semibold"><%= booking.ownerId %></div>
+      </div>
+      <div class="col-md-6">
+        <div class="text-muted small">petId</div>
+        <div class="fw-semibold"><%= booking.petId %></div>
+      </div>
+    </div>
+
+    <form method="POST" action="/bookings/<%= booking.bookingId %>/delete" class="mt-4">
+      <div class="d-flex gap-2">
+        <button class="btn btn-danger" type="submit">Yes, Delete Booking</button>
+        <a class="btn btn-outline-secondary" href="/bookings">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>

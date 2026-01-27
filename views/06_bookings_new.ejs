@@ -1,0 +1,54 @@
+<!-- views/06_bookings_new.ejs -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="h4 mb-0">Add New Booking</h2>
+  <a class="btn btn-outline-secondary" href="/bookings">Back</a>
+</div>
+
+<div class="card shadow-sm rounded-4">
+  <div class="card-body">
+    <form method="POST" action="/bookings">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label">bookingDate</label>
+          <input class="form-control" type="date" name="bookingDate" required>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">startTime</label>
+          <input class="form-control" type="time" name="startTime" required>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">endTime</label>
+          <input class="form-control" type="time" name="endTime" required>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">status</label>
+          <select class="form-select" name="status" required>
+            <option value="Pending" selected>Pending</option>
+            <option value="Confirmed">Confirmed</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">ownerId</label>
+          <input class="form-control" type="number" name="ownerId" min="1" placeholder="e.g., 1" required>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">petId</label>
+          <input class="form-control" type="number" name="petId" min="1" placeholder="e.g., 1" required>
+        </div>
+      </div>
+
+      <div class="d-flex gap-2 mt-4">
+        <button class="btn btn-success" type="submit">Create Booking</button>
+        <a class="btn btn-outline-secondary" href="/bookings">Cancel</a>
+      </div>
+
+    </form>
+  </div>
+</div>

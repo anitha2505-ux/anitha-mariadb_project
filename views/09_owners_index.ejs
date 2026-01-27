@@ -1,0 +1,37 @@
+<!-- views/09_owners_index.ejs -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="h4 mb-0">Owners</h2>
+</div>
+
+<div class="card shadow-sm rounded-4">
+  <div class="card-body">
+    <% if (!owners || owners.length === 0) { %>
+      <div class="text-muted">No owners found.</div>
+    <% } else { %>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>ownerId</th>
+              <th>firstName</th>
+              <th>lastName</th>
+              <th>email</th>
+              <th>phone</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% owners.forEach(o => { %>
+              <tr>
+                <td><%= o.ownerId %></td>
+                <td class="fw-semibold"><%= o.firstName %></td>
+                <td><%= o.lastName %></td>
+                <td><%= o.email %></td>
+                <td><%= o.phone %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </div>
+</div>
