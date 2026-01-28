@@ -29,7 +29,7 @@ app.use(express.urlencoded({
     extended: true
 }))
 
-// enables flash messages on session
+// enables flash messages on session - middleware
 app.use(
     session({
         secret: process.env.SESSION_SECRET,
@@ -100,8 +100,13 @@ app.get("/bookings", async function (req, res) {
     const results = await dbConnection.query(sql);
     const rows = results[0];
 
+    // Flash: read once, then clear
+    const flashMessage = req.session.flashMessage || null;
+    req.session.flashMessage = null;
+
     res.render('05_bookings_index', {
-        bookings: rows
+        bookings: rows,
+        flashMessage
     })
 });
 
@@ -184,7 +189,33 @@ app.get("/bookings/:bookingId/delete", async (req, res) => {
 });
 
 // Bookings Post - delete route 
-//app.post()
+app.post("/bookings/:bookingId/delete", async (req, res) => {
+    try {
+        const bookingId = req.params.bookingId;
+
+        // FK default is RESTRICT/NO ACTION, so delete child rows first
+        await dbConnection.query(
+            "DELETE FROM bookingServices WHERE bookingId = ?",
+            [bookingId]
+        );
+
+        const [result] = await dbConnection.query(
+            "DELETE FROM bookings WHERE bookingId = ?",
+            [bookingId]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).send("Booking not found");
+        }
+        // Flash message
+        req.session.flashMessage = `Booking ${bookingId} is successfully deleted`;
+
+        res.redirect("/bookings");
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error deleting booking");
+    }
+});
 
 app.listen(3000, () => {
     console.log('server is running');
