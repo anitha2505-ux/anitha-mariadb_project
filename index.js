@@ -82,7 +82,7 @@ app.get("/bookings", async function (req, res) {
         s.serviceName AS serviceName,
 
         o.firstName AS ownerFirstName,
-        o.lastName AS ownerlastName,
+        o.lastName AS ownerLastName,
         o.email AS ownerEmail,
         o.phone AS ownerPhone,
 
@@ -112,13 +112,13 @@ app.get("/bookings", async function (req, res) {
 
 // Route for listing services in Add new booking
 app.get("/bookings/new", async function (req, res) {
-    const sql = 'SELECT serviceName FROM services ORDER BY serviceName'
+    const sql = "SELECT serviceId, serviceName FROM services ORDER BY serviceName";
     const results = await dbConnection.query(sql);
     const rows = results[0];
 
     res.render("06_bookings_new", {
         services: rows
-    })
+    });
 });
 
 // Read from services table
@@ -152,6 +152,244 @@ app.get("/owners", async function (req, res) {
     res.render('09_owners_index', {
         owners: rows
     })
+});
+
+// Create new booking 
+app.post("/bookings/create", async (req, res) => {
+    try {
+        const {
+            bookingDate,
+            startTime,
+            endTime,
+            status,
+            petName,
+            species,
+            ownerFirstName,
+            ownerLastName,
+            ownerEmail,
+            ownerPhone
+        } = req.body;
+
+        // services from checklist
+        let serviceIds = req.body.serviceIds;
+
+        // normalize to array
+        if (Array.isArray(serviceIds)) {
+            // ok
+        } else if (serviceIds) {
+            serviceIds = [serviceIds];
+        } else {
+            serviceIds = [];
+        }
+
+        // remove blanks + non-numbers, convert to integers
+        serviceIds = serviceIds
+            .map(v => String(v).trim())
+            .filter(v => v !== "" && /^\d+$/.test(v))
+            .map(v => parseInt(v, 10));
+
+        if (serviceIds.length === 0) {
+            req.session.flashMessage = "Please select at least one service.";
+            return res.redirect("/bookings/new");
+        }
+
+        // check and reuse owners
+        const [ownerRows] = await dbConnection.query(
+            "SELECT ownerId FROM owners WHERE email = ? OR phone = ? LIMIT 1",
+            [ownerEmail, ownerPhone]
+        );
+
+        let ownerId;
+        if (ownerRows.length > 0) {
+            ownerId = ownerRows[0].ownerId;
+        } else {
+            const [ownerResult] = await dbConnection.query(
+                "INSERT INTO owners (firstName, lastName, email, phone) VALUES (?, ?, ?, ?)",
+                [ownerFirstName, ownerLastName, ownerEmail, ownerPhone]
+            );
+            ownerId = ownerResult.insertId;
+        }
+
+        // check and reuse pets
+        const [petRows] = await dbConnection.query(
+            "SELECT petId FROM pets WHERE petName = ? AND ownerId = ? LIMIT 1",
+            [petName, ownerId]
+        );
+
+        let petId;
+        if (petRows.length > 0) {
+            petId = petRows[0].petId;
+        } else {
+            const [petResult] = await dbConnection.query(
+                "INSERT INTO pets (petName, species, ownerId) VALUES (?, ?, ?)",
+                [petName, species, ownerId]
+            );
+            petId = petResult.insertId;
+        }
+
+        // create booking
+        const [bookingResult] = await dbConnection.query(
+            `INSERT INTO bookings
+       (bookingDate, startTime, endTime, status, ownerId, petId)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+            [bookingDate, startTime, endTime, status, ownerId, petId]
+        );
+
+        const bookingId = bookingResult.insertId;
+
+        // insert to bookingServices
+        for (const serviceId of serviceIds) {
+            await dbConnection.query(
+                "INSERT INTO bookingServices (bookingId, serviceId) VALUES (?, ?)",
+                [bookingId, serviceId]
+            );
+        }
+
+        // success flash message
+        req.session.flashMessage = `Booking ${bookingId} is successfully created`;
+        res.redirect("/bookings");
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error create booking");
+    }
+});
+
+// edit booking - fill form with existing details 
+app.get("/bookings/:bookingId/edit", async (req, res) => {
+    try {
+        const bookingId = req.params.bookingId;
+
+        // 1) booking details + owner + pet
+        const bookingSql = `
+      SELECT
+        b.bookingId,
+        b.bookingDate,
+        b.startTime,
+        b.endTime,
+        b.status,
+
+        o.firstName AS ownerFirstName,
+        o.lastName  AS ownerLastName,
+        o.email     AS ownerEmail,
+        o.phone     AS ownerPhone,
+
+        p.petName   AS petName,
+        p.species   AS species
+      FROM bookings b
+      JOIN owners o ON b.ownerId = o.ownerId
+      JOIN pets p   ON b.petId   = p.petId
+      WHERE b.bookingId = ?
+      LIMIT 1
+    `;
+        const [bookingRows] = await dbConnection.query(bookingSql, [bookingId]);
+        if (bookingRows.length === 0) return res.status(404).send("Booking not found");
+
+        // 2) all services
+        const [services] = await dbConnection.query(
+            "SELECT serviceId, serviceName FROM services ORDER BY serviceName"
+        );
+
+        // 3) selected services for this booking
+        const [selectedRows] = await dbConnection.query(
+            "SELECT serviceId FROM bookingServices WHERE bookingId = ?",
+            [bookingId]
+        );
+        const selectedServiceIds = selectedRows.map(r => r.serviceId);
+
+        res.render("07_bookings_edit", {
+            booking: bookingRows[0],
+            services,
+            selectedServiceIds
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error loading edit page");
+    }
+});
+
+// post edited booking - replace the booking details with edit
+app.post("/bookings/:bookingId/update", async (req, res) => {
+  try {
+    const bookingId = req.params.bookingId;
+
+    const {
+      bookingDate,
+      startTime,
+      endTime,
+      status,
+      petName,
+      species,
+      ownerFirstName,
+      ownerLastName,
+      ownerEmail,
+      ownerPhone
+    } = req.body;
+
+    // serviceIds sanitise
+    let serviceIds = req.body.serviceIds;
+    if (Array.isArray(serviceIds)) {
+      // ok
+    } else if (serviceIds) {
+      serviceIds = [serviceIds];
+    } else {
+      serviceIds = [];
+    }
+
+    serviceIds = serviceIds
+      .map(v => String(v).trim())
+      .filter(v => v !== "" && /^\d+$/.test(v))
+      .map(v => parseInt(v, 10));
+
+    if (serviceIds.length === 0) {
+      req.session.flashMessage = "Please select at least one service.";
+      return res.redirect(`/bookings/${bookingId}/edit`);
+    }
+
+    // Get ownerId + petId for this booking
+    const [idRows] = await dbConnection.query(
+      "SELECT ownerId, petId FROM bookings WHERE bookingId = ? LIMIT 1",
+      [bookingId]
+    );
+    if (idRows.length === 0) return res.status(404).send("Booking not found");
+
+    const ownerId = idRows[0].ownerId;
+    const petId = idRows[0].petId;
+
+    // Update bookings
+    await dbConnection.query(
+      "UPDATE bookings SET bookingDate = ?, startTime = ?, endTime = ?, status = ? WHERE bookingId = ?",
+      [bookingDate, startTime, endTime, status, bookingId]
+    );
+
+    // Update owner
+    await dbConnection.query(
+      "UPDATE owners SET firstName = ?, lastName = ?, email = ?, phone = ? WHERE ownerId = ?",
+      [ownerFirstName, ownerLastName, ownerEmail, ownerPhone, ownerId]
+    );
+
+    // Update pet
+    await dbConnection.query(
+      "UPDATE pets SET petName = ?, species = ? WHERE petId = ?",
+      [petName, species, petId]
+    );
+
+    // Replace bookingServices
+    await dbConnection.query("DELETE FROM bookingServices WHERE bookingId = ?", [bookingId]);
+
+    for (const serviceId of serviceIds) {
+      await dbConnection.query(
+        "INSERT INTO bookingServices (bookingId, serviceId) VALUES (?, ?)",
+        [bookingId, serviceId]
+      );
+    }
+
+    req.session.flashMessage = `Booking ${bookingId} is successfully updated`;
+    res.redirect("/bookings");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error updating booking");
+  }
 });
 
 // delete from bookings table

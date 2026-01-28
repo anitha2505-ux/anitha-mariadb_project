@@ -1,53 +1,102 @@
-<!-- views/07_bookings_edit.ejs -->
-<div class="d-flex justify-content-between align-items-center mb-3">
-  <h2 class="h4 mb-0">Edit Booking #<%= booking.bookingId %></h2>
-  <a class="btn btn-outline-secondary" href="/bookings">Back</a>
-</div>
+<!DOCTYPE html>
+<html lang="en">
 
-<div class="card shadow-sm rounded-4">
-  <div class="card-body">
-    <form method="POST" action="/bookings/<%= booking.bookingId %>">
-      <div class="row g-3">
-        <div class="col-md-4">
-          <label class="form-label">bookingDate</label>
-          <input class="form-control" type="date" name="bookingDate"
-                 value="<%= booking.bookingDate ? String(booking.bookingDate).slice(0,10) : "" %>" required>
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Booking</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+  <div class="container mt-4">
+    <h3 class="mb-3">Edit Booking #<%= booking.bookingId %>
+    </h3>
+
+    <form method="POST" action="/bookings/<%= booking.bookingId %>/update">
+
+      <input type="date" name="bookingDate" class="form-control"
+        value="<%= booking.bookingDate ? new Date(booking.bookingDate).toISOString().slice(0,10) : '' %>" required>
+
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Start Time *</label>
+          <input type="time" name="startTime" class="form-control" value="<%= booking.startTime %>" required>
         </div>
-
-        <div class="col-md-4">
-          <label class="form-label">startTime</label>
-          <input class="form-control" type="time" name="startTime" value="<%= booking.startTime %>" required>
-        </div>
-
-        <div class="col-md-4">
-          <label class="form-label">endTime</label>
-          <input class="form-control" type="time" name="endTime" value="<%= booking.endTime %>" required>
-        </div>
-
-        <div class="col-md-4">
-          <label class="form-label">status</label>
-          <select class="form-select" name="status" required>
-            <% ["Pending","Confirmed","Completed","Cancelled"].forEach(s => { %>
-              <option value="<%= s %>" <%= booking.status === s ? "selected" : "" %>><%= s %></option>
-            <% }) %>
-          </select>
-        </div>
-
-        <div class="col-md-4">
-          <label class="form-label">ownerId</label>
-          <input class="form-control" type="number" name="ownerId" min="1" value="<%= booking.ownerId %>" required>
-        </div>
-
-        <div class="col-md-4">
-          <label class="form-label">petId</label>
-          <input class="form-control" type="number" name="petId" min="1" value="<%= booking.petId %>" required>
+        <div class="col-md-6">
+          <label class="form-label">End Time *</label>
+          <input type="time" name="endTime" class="form-control" value="<%= booking.endTime %>" required>
         </div>
       </div>
 
-      <div class="d-flex gap-2 mt-4">
-        <button class="btn btn-primary" type="submit">Save Changes</button>
-        <a class="btn btn-outline-secondary" href="/bookings">Cancel</a>
+      <div class="mb-3">
+        <label class="form-label">Status *</label>
+        <select name="status" class="form-select" required>
+          <option value="Pending" <%=booking.status==="Pending" ? "selected" : "" %>>Pending</option>
+          <option value="Confirmed" <%=booking.status==="Confirmed" ? "selected" : "" %>>Confirmed</option>
+          <option value="Cancelled" <%=booking.status==="Cancelled" ? "selected" : "" %>>Cancelled</option>
+        </select>
       </div>
+
+      <hr class="my-4">
+
+      <h5>Pet Details</h5>
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Pet Name *</label>
+          <input type="text" name="petName" class="form-control" value="<%= booking.petName %>" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Species *</label>
+          <input type="text" name="species" class="form-control" value="<%= booking.species %>" required>
+        </div>
+      </div>
+
+      <h5>Owner Details</h5>
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Owner First Name *</label>
+          <input type="text" name="ownerFirstName" class="form-control" value="<%= booking.ownerFirstName %>" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Owner Last Name *</label>
+          <input type="text" name="ownerLastName" class="form-control" value="<%= booking.ownerLastName %>" required>
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Owner Email *</label>
+          <input type="email" name="ownerEmail" class="form-control" value="<%= booking.ownerEmail %>" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Owner Phone *</label>
+          <input type="text" name="ownerPhone" class="form-control" value="<%= booking.ownerPhone %>" required>
+        </div>
+      </div>
+
+      <hr class="my-4">
+
+      <h5>Services *</h5>
+      <div class="mb-3 border rounded p-3">
+        <% services.forEach((s, index)=> { %>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="serviceIds[]" id="service_<%= s.serviceId %>"
+              value="<%= s.serviceId %>" <%=selectedServiceIds.includes(s.serviceId) ? "checked" : "" %>
+            
+              >
+              <label class="form-check-label" for="service_<%= s.serviceId %>">
+                <%= s.serviceName %>
+              </label>
+          </div>
+          <% }) %>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Update Booking</button>
+      <a href="/bookings" class="btn btn-secondary">Cancel</a>
+
     </form>
   </div>
-</div>
+</body>
+
+</html>
