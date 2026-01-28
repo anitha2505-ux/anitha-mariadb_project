@@ -218,3 +218,12 @@ SELECT
 
       ORDER BY b.bookingId DESC;
     
+-- ADD UNIQUE IDS FOR owners (email and phone) and pets(owner_petName) 
+-- to avoid duplicates in email, phone and pets
+
+ALTER TABLE owners
+ADD UNIQUE KEY uq_owners_email (email),
+ADD UNIQUE KEY uq_owners_phone (phone);
+
+ALTER TABLE pets
+ADD UNIQUE KEY uq_pets_owners_petname (ownerId, petName);
