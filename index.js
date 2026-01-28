@@ -63,8 +63,9 @@ const dbConfig = {
 }
 
 const dbConnection = mysql2.createPool(dbConfig);
-// home page view
 
+// ROUTES
+// home page view
 app.get("/PawfectCare", function (req, res) {
     res.render('01_home')
 })
@@ -105,7 +106,7 @@ app.get("/bookings", async function (req, res) {
 });
 
 // Route for listing services in Add new booking
-app.get("/bookings/new", async function (req,res) {
+app.get("/bookings/new", async function (req, res) {
     const sql = 'SELECT serviceName FROM services ORDER BY serviceName'
     const results = await dbConnection.query(sql);
     const rows = results[0];
@@ -147,6 +148,43 @@ app.get("/owners", async function (req, res) {
         owners: rows
     })
 });
+
+// delete from bookings table
+// get route to display first
+app.get("/bookings/:bookingId/delete", async (req, res) => {
+    try {
+        const bookingId = req.params.bookingId;
+
+        const sql = `
+      SELECT
+        b.bookingId,
+        b.bookingDate,
+        b.startTime,
+        b.endTime,
+        b.status,
+        p.petName,
+        p.species AS species,
+        o.firstName AS ownerFirstName,
+        o.lastName  AS ownerLastName
+      FROM bookings b
+      JOIN owners o ON b.ownerId = o.ownerId
+      JOIN pets p   ON b.petId   = p.petId
+      WHERE b.bookingId = ?
+    `;
+
+        const [rows] = await dbConnection.query(sql, [bookingId]);
+
+        if (rows.length === 0) return res.status(404).send("Booking not found");
+
+        res.render("08_bookings_delete", { booking: rows[0] });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error loading delete confirmation");
+    }
+});
+
+// Bookings Post - delete route 
+//app.post()
 
 app.listen(3000, () => {
     console.log('server is running');
