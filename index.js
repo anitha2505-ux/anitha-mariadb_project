@@ -102,7 +102,18 @@ app.get("/bookings", async function (req, res) {
     res.render('05_bookings_index', {
         bookings: rows
     })
-})
+});
+
+// Route for listing services in Add new booking
+app.get("/bookings/new", async function (req,res) {
+    const sql = 'SELECT serviceName FROM services ORDER BY serviceName'
+    const results = await dbConnection.query(sql);
+    const rows = results[0];
+
+    res.render("06_bookings_new", {
+        services: rows
+    })
+});
 
 // Read from services table
 app.get("/services", async function (req, res) {
@@ -113,7 +124,7 @@ app.get("/services", async function (req, res) {
     res.render('11_services_index', {
         services: rows
     })
-})
+});
 
 // Read from pets table
 app.get("/pets", async function (req, res) {
@@ -135,12 +146,7 @@ app.get("/owners", async function (req, res) {
     res.render('09_owners_index', {
         owners: rows
     })
-})
-
-app.get("/bookings/new", function (req, res) {
-    res.render("06_bookings_new");
-})
-
+});
 
 app.listen(3000, () => {
     console.log('server is running');
