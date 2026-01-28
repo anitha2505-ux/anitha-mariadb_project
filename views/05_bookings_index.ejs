@@ -13,13 +13,18 @@
         <table class="table table-hover align-middle mb-0">
           <thead class="table-light">
             <tr>
-              <th>Booking</th>
+              <th>Booking ID</th>
               <th>Date</th>
               <th>From</th>
               <th>To</th>
+              <th>Service</th>
               <th>Status</th>
-              <th>Owner</th>
-              <th>Pet</th>
+              <th>Owner First Name</th>
+              <th>Owner Last Name</th>
+              <th>Pet Name</th>
+              <th>Species</th>
+              <th>Email</th>
+              <th>Phone</th>
               <th class="text-end">Actions</th>
             </tr>
           </thead>
@@ -30,9 +35,14 @@
                 <td><%= b.bookingDate ? String(b.bookingDate).slice(0,10) : "-" %></td>
                 <td><%= b.startTime %></td>
                 <td><%= b.endTime %></td>
+                <td><%= b.serviceName ? b.serviceName : "No Service" %></td>
                 <td><span class="badge text-bg-secondary"><%= b.status %></span></td>
-                <td><%= b.ownerId %></td>
-                <td><%= b.petId %></td>
+                <td><%= b.ownerFirstName %></td>
+                <td><%= b.ownerLastName %></td>
+                <td><%= b.petName %></td>
+                <td><%= b.species %></td>
+                <td><%= b.ownerEmail %></td>
+                <td><%= b.ownerPhone %></td>
                 <td class="text-end">
                   <a class="btn btn-sm btn-outline-primary" href="/bookings/<%= b.bookingId %>/edit">Edit</a>
                   <a class="btn btn-sm btn-outline-danger" href="/bookings/<%= b.bookingId %>/delete">Delete</a>

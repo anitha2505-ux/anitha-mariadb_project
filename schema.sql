@@ -158,6 +158,13 @@ INSERT INTO bookings (bookingDate, startTime, endTime, ownerId, petId, status) V
 ('2026-02-13', '16:00:00', '17:00:00', 4, 4, 'Completed'),
 ('2026-02-14', '11:00:00', '12:00:00', 5, 5, 'Confirmed');
 
+INSERT INTO bookingServices (bookingId, serviceId) VALUES
+(1,1),
+(2,6),
+(3,7),
+(4,8),
+(5,9);
+
 -- change datatype of services.durationMinutes to smallINT unsigned from tintINT unsigned
 ALTER TABLE services
 MODIFY durationMinutes SMALLINT UNSIGNED NOT NULL;
@@ -193,41 +200,21 @@ SELECT
         b.endTime,
         b.status,
 
-        o.ownerId,
-        o.firstName,
-        o.lastName,
-        o.email,
-        o.phone,
+        s.serviceName AS serviceName,
 
-        p.petId,
-        p.petName,
-        p.species,
+        o.firstName AS ownerFirstName,
+        o.lastName AS ownerlastName,
+        o.email AS ownerEmail,
+        o.phone AS ownerPhone,
 
-        COALESCE(
-          GROUP_CONCAT(DISTINCT s.serviceName ORDER BY s.serviceName SEPARATOR ', '),
-          'No Services'
-        ) AS servicesBooked
+        p.petName AS petName,
+        p.species AS species
 
       FROM bookings b
       JOIN owners o ON b.ownerId = o.ownerId
       JOIN pets p ON b.petId = p.petId
       LEFT JOIN bookingServices bs ON b.bookingId = bs.bookingId
       LEFT JOIN services s ON bs.serviceId = s.serviceId
-
-      GROUP BY 
-        b.bookingId,
-        b.bookingDate,
-        b.startTime,
-        b.endTime,
-        b.status,
-        o.ownerId,
-        o.firstName,
-        o.lastName,
-        o.email,
-        o.phone,
-        p.petId,
-        p.petName,
-        p.species
 
       ORDER BY b.bookingId DESC;
     

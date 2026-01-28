@@ -8,6 +8,13 @@
 
 	// Example: Run npm install automatically
 	"postCreateCommand": "npm install",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"cweijan.dbclient-jdbc"
+			]
+		}
+	},
 
 	// Uncomment if you want to customize VS Code settings/extensions here
 	// "customizations": {

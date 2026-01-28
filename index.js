@@ -71,7 +71,31 @@ app.get("/PawfectCare", function (req, res) {
 
 // Read from bookings table
 app.get("/bookings", async function (req, res) {
-    const sql = 'SELECT * FROM bookings'
+    const sql = `SELECT 
+        b.bookingId,
+        b.bookingDate,
+        b.startTime,
+        b.endTime,
+        b.status,
+
+        s.serviceName AS serviceName,
+
+        o.firstName AS ownerFirstName,
+        o.lastName AS ownerlastName,
+        o.email AS ownerEmail,
+        o.phone AS ownerPhone,
+
+        p.petName AS petName,
+        p.species AS species
+
+      FROM bookings b
+      JOIN owners o ON b.ownerId = o.ownerId
+      JOIN pets p ON b.petId = p.petId
+      LEFT JOIN bookingServices bs ON b.bookingId = bs.bookingId
+      LEFT JOIN services s ON bs.serviceId = s.serviceId
+
+      ORDER BY b.bookingId DESC;`
+
     const results = await dbConnection.query(sql);
     const rows = results[0];
 
