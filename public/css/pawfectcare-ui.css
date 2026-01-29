@@ -1,0 +1,551 @@
+/* =========================================================
+   PawfectCare UI Design System (HTML/CSS only)
+   Brand palette:
+   #780116 (Deep Garnet) | #F7B538 (Golden Amber) | #DB7C26 (Burnt Saffron)
+   #D8572A (Spiced Coral) | #C32F27 (Warm Crimson)
+   Fonts: Poppins (headings/UI), Nunito (body)
+========================================================= */
+
+:root {
+    --pc-garnet: #780116;
+    --pc-amber: #F7B538;
+    --pc-saffron: #DB7C26;
+    --pc-coral: #D8572A;
+    --pc-crimson: #C32F27;
+    --pc-cream: #FFF6E1;
+
+    --pc-bg: #FFFDF9;
+    /* warm off-white */
+    --pc-card: #FFFFFF;
+    --pc-border: #EAEAEA;
+    --pc-text: #1F1F1F;
+    --pc-muted: #6B6B6B;
+
+    --pc-radius-lg: 16px;
+    --pc-radius-md: 12px;
+    --pc-radius-sm: 10px;
+
+    --pc-shadow: 0 10px 30px rgba(0, 0, 0, .06);
+
+    --pc-font-h: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    --pc-font-b: 'Nunito', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+
+    /* Bootstrap theme overrides (works with existing Bootstrap markup) */
+    --bs-primary: var(--pc-amber);
+    --bs-secondary: #E9E9E9;
+    --bs-success: #2E7D32;
+    --bs-danger: var(--pc-crimson);
+    --bs-warning: var(--pc-saffron);
+    --bs-info: var(--pc-garnet);
+
+    --bs-body-font-family: var(--pc-font-b);
+    --bs-body-bg: var(--pc-bg);
+    --bs-body-color: var(--pc-text);
+}
+
+.pc-body {
+    background: var(--pc-bg);
+    font-family: var(--pc-font-b);
+    color: var(--pc-text);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+    font-family: var(--pc-font-h);
+    letter-spacing: -0.02em;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+/* ---------------------------
+   Navbar (Top) + Logo
+---------------------------- */
+.navbar {
+    background: #121212 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, .08);
+}
+
+.navbar .navbar-brand {
+    font-family: var(--pc-font-h);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pc-brand-logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    object-fit: contain;
+    background: #fff;
+    padding: 4px;
+}
+
+/* Nav buttons become “pills” */
+.navbar .btn {
+    border-radius: 999px !important;
+    padding: 8px 12px !important;
+    font-family: var(--pc-font-h);
+    font-weight: 600;
+    letter-spacing: .01em;
+}
+
+/* ---------------------------
+   Cards / Sections
+---------------------------- */
+.pc-card {
+    background: var(--pc-card);
+    border: 1px solid var(--pc-border);
+    border-radius: var(--pc-radius-lg);
+    box-shadow: var(--pc-shadow);
+}
+
+.pc-card-header {
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--pc-border);
+}
+
+.pc-card-body {
+    padding: 18px;
+}
+
+/* Soft container spacing */
+.pc-section {
+    margin-bottom: 16px;
+}
+
+
+/* ---------------------------
+   Buttons (classy + trendy)
+---------------------------- */
+.btn {
+    border-radius: var(--pc-radius-md) !important;
+    font-family: var(--pc-font-h);
+    font-weight: 600;
+}
+
+/* Primary action buttons (Add, Save, Create, Confirm) */
+.btn-primary{
+  background: var(--pc-amber) !important;
+  border-color: var(--pc-amber) !important;
+  color: #4A3300 !important;          /* warm branded dark */
+}
+
+/* Success buttons (used by Add New Booking in your screen) */
+.btn-success{
+  background: var(--pc-saffron) !important;
+  border-color: var(--pc-saffron) !important;
+  color: #4A2600 !important;          /* lighter, branded */
+}
+
+.btn-primary:hover,
+.btn-success:hover{
+  filter: brightness(0.96);
+}
+
+.btn-primary:hover {
+    filter: brightness(.96);
+}
+
+.btn-outline-primary {
+    border-color: var(--pc-garnet) !important;
+    color: var(--pc-garnet) !important;
+}
+
+.btn-outline-primary:hover {
+    background: rgba(120, 1, 22, .08) !important;
+}
+
+.btn-success {
+    background: var(--pc-saffron) !important;
+    border-color: var(--pc-saffron) !important;
+    color: #1A1A1A !important;
+}
+
+.btn-secondary {
+    background: #F0F0F0 !important;
+    border-color: #F0F0F0 !important;
+    color: #222 !important;
+}
+
+.btn-sm {
+    border-radius: 12px !important;
+}
+
+.pc-icon-btn i {
+    font-size: 1rem;
+    vertical-align: -0.1em;
+}
+
+/* ---------------------------
+   Forms
+---------------------------- */
+label.form-label {
+    font-weight: 700;
+    font-family: var(--pc-font-h);
+    color: #2A2A2A;
+    margin-bottom: 6px;
+}
+
+.form-control,
+.form-select {
+    border-radius: var(--pc-radius-md) !important;
+    border: 1px solid var(--pc-border) !important;
+    padding: 10px 12px !important;
+    background: #fff;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: rgba(247, 181, 56, .65) !important;
+    box-shadow: 0 0 0 .2rem rgba(247, 181, 56, .25) !important;
+}
+
+/* ---------------------------
+   Tables (scrollable, sticky header)
+---------------------------- */
+.pc-table-wrap {
+    border: 1px solid var(--pc-border);
+    border-radius: var(--pc-radius-lg);
+    overflow: hidden;
+    background: #fff;
+}
+
+.pc-table-scroll {
+    max-height: 72vh;
+    /* table scrolls inside card */
+    overflow: auto;
+    /* both x and y scroll */
+}
+
+/* Services list inside bookings table */
+.pc-service-list{
+  margin: 0;
+  padding-left: 18px;   /* subtle indent */
+  list-style-type: disc;
+}
+
+.pc-service-list li{
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.pc-service-list li:last-child{
+  margin-bottom: 0;
+}
+
+.pc-col-muted{
+  color: var(--pc-muted);
+  font-size: 13px;
+}
+
+.pc-action-group{
+  display: inline-flex;
+  gap: 8px;
+}
+
+.pc-action{
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--pc-border);
+  background: #fff;
+  color: #333;
+}
+
+.pc-action.edit{ color: var(--pc-garnet); }
+.pc-action.delete{ color: var(--pc-crimson); }
+
+.pc-action:hover{
+  background: rgba(0,0,0,.04);
+}
+
+.pc-action.edit{
+  color: var(--pc-garnet);
+}
+
+.pc-action.delete{
+  color: var(--pc-crimson);
+}
+
+.table thead th{
+  font-size: 13px;
+  letter-spacing: .02em;
+}
+
+.table {
+    margin: 0 !important;
+}
+
+.table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: #FFF !important;
+    border-bottom: 1px solid var(--pc-border) !important;
+    font-family: var(--pc-font-h);
+    font-weight: 700;
+    color: #2A2A2A;
+}
+
+.table td,
+.table th {
+    padding: 14px 14px !important;
+    font-size: 14px;
+    vertical-align: middle !important;
+    border-color: #F0F0F0 !important;
+}
+
+.table tbody tr{
+  height: 56px;
+}
+
+.table-hover tbody tr:hover {
+    background: rgba(247, 181, 56, .10) !important;
+}
+
+/* ---------------------------
+   Status Pills (consistent everywhere)
+---------------------------- */
+.pc-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 800;
+    font-family: var(--pc-font-h);
+    letter-spacing: .01em;
+    border: 1px solid rgba(0, 0, 0, .06);
+    white-space: nowrap;
+}
+
+.pc-status::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 99px;
+    background: #999;
+}
+
+/* match your current statuses exactly (Pending/Confirmed/Cancelled) */
+.pc-status-Pending {
+    background: rgba(219, 124, 38, .18);
+    color: #3A240E;
+}
+
+.pc-status-Pending::before {
+    background: var(--pc-saffron);
+}
+
+.pc-status-Confirmed {
+    background: rgba(46, 125, 50, .16);
+    color: #0E2A12;
+}
+
+.pc-status-Confirmed::before {
+    background: #2E7D32;
+    ;
+}
+
+.pc-status-Cancelled {
+    background: rgba(195, 47, 39, .14);
+    color: #3B0A07;
+}
+
+.pc-status-Cancelled::before {
+    background: var(--pc-crimson);
+}
+
+.pc-status-Confirmed::after {
+    content: " ✔";
+    font-weight: 900;
+}
+
+.pc-status-Cancelled::after {
+    content: " ✖";
+    font-weight: 900;
+}
+
+/* Optional future statuses (safe to keep now) */
+.pc-status-Completed {
+    background: rgba(46, 125, 50, .12);
+    color: #0E2A12;
+}
+
+.pc-status-Completed::before {
+    background: #2E7D32;
+}
+
+.pc-status-InProgress,
+.pc-status-IN_PROGRESS {
+    background: rgba(120, 1, 22, .12);
+    color: var(--pc-garnet);
+}
+
+.pc-status-InProgress::before,
+.pc-status-IN_PROGRESS::before {
+    background: var(--pc-garnet);
+}
+
+/* ---------------------------
+   Alerts / Flash messages (funny, classy)
+---------------------------- */
+.pc-flash {
+    border-radius: var(--pc-radius-md);
+    padding: 14px 16px;
+    border: 1px solid var(--pc-border);
+    background: #fff;
+    box-shadow: var(--pc-shadow);
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.pc-flash strong {
+    font-family: var(--pc-font-h);
+}
+
+.pc-flash-success {
+    border-left: 6px solid var(--pc-amber);
+    background: rgba(247, 181, 56, .14);
+}
+
+.pc-flash-success .pc-flash-emoji {
+    content: "";
+}
+
+.pc-flash-error {
+    border-left: 6px solid var(--pc-crimson);
+    background: rgba(195, 47, 39, .10);
+}
+
+.pc-flash-info {
+    border-left: 6px solid var(--pc-garnet);
+    background: rgba(120, 1, 22, .08);
+}
+
+/* Small helper text */
+.pc-muted {
+    color: var(--pc-muted);
+}
+
+/* Utility for page headers */
+.pc-page-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.pc-page-title h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.pc-page-title .pc-title-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pc-title-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 14px;
+    background: rgba(247, 181, 56, .18);
+    display: grid;
+    place-items: center;
+    color: #1A1A1A;
+}
+
+/* =====================================================
+   FORCE primary CTA text colour (cream)
+   ===================================================== */
+
+.btn-primary,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-success,
+.btn-success:focus,
+.btn-success:active{
+  color: var(--pc-cream) !important;
+}
+
+.btn-primary:hover,
+.btn-success:hover{
+  filter: brightness(0.95);
+}
+
+/* Prevent wrapping for compact columns like Date/Time */
+.pc-nowrap{
+  white-space: nowrap !important;
+}
+
+/* Compact filter bar */
+.pc-filter-bar{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: end;
+}
+
+.pc-filter-item{
+  min-width: 160px;
+  flex: 1 1 160px;
+}
+
+.pc-filter-item.small{
+  min-width: 140px;
+  flex: 0 1 140px;
+}
+
+.pc-filter-actions{
+  display: flex;
+  gap: 10px;
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+
+.pc-filter-bar .form-label{
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.pc-filter-bar .form-control,
+.pc-filter-bar .form-select{
+  height: 40px;
+  padding: 8px 10px;
+}
+
+
+/* =====================================================
+   GLOBAL HEADER COLOUR — Spiced Coral
+   Applies across entire app
+   ===================================================== */
+
+h1
+.pc-page-title h2,
+.pc-card-header strong,
+.pc-card-header h3,
+label.form-label,
+.table thead th,
+.table thead th a {
+  color: var(--pc-coral) !important; /* #D8572A */
+}

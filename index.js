@@ -40,6 +40,9 @@ app.use(
 
 app.use(flash());
 
+// to use public CSS and Images folder 
+app.use(express.static("public"));
+
 //make flash messages available for EJS pages
 
 app.use((req, res, next) => {
@@ -72,23 +75,26 @@ app.get("/PawfectCare", function (req, res) {
 
 // Read from bookings table
 app.get("/bookings", async function (req, res) {
-  try {
-    // ---- Read filters from query string ----
-    const status = req.query.status?.trim() || "";
-    const dateFrom = req.query.dateFrom?.trim() || "";
-    const dateTo = req.query.dateTo?.trim() || "";
-    const ownerEmail = req.query.ownerEmail?.trim() || "";
-    const serviceId = req.query.serviceId?.trim() || "";
+    try {
+        // ---- Read filters from query string ----
+        const status = req.query.status?.trim() || "";
+        const dateFrom = req.query.dateFrom?.trim() || "";
+        const dateTo = req.query.dateTo?.trim() || "";
+        const ownerEmail = req.query.ownerEmail?.trim() || "";
+        const serviceId = req.query.serviceId?.trim() || "";
+        const sort = req.query.sort?.trim() || "";
+        const order = req.query.order?.trim() || "asc";
 
-    const filters = { status, dateFrom, dateTo, ownerEmail, serviceId };
+        const filters = { status, dateFrom, dateTo, ownerEmail, serviceId, sort, order };
 
-    // ✅ SELECT #1 (for dropdown options)
-    const [services] = await dbConnection.query(
-      "SELECT serviceId, serviceName FROM services ORDER BY serviceName"
-    );
+        
+        // ✅ SELECT #1 (for dropdown options)
+        const [services] = await dbConnection.query(
+            "SELECT serviceId, serviceName FROM services ORDER BY serviceName"
+        );
 
-    // ✅ SELECT #2 (bookings list with filters)
-    let sql = `
+        // ✅ SELECT #2 (bookings list with filters)
+        let sql = `
       SELECT
         b.bookingId,
         b.bookingDate,
@@ -113,39 +119,39 @@ app.get("/bookings", async function (req, res) {
       LEFT JOIN services s         ON bs.serviceId = s.serviceId
     `;
 
-    const where = [];
-    const params = [];
+        const where = [];
+        const params = [];
 
-    if (status) {
-      where.push("b.status = ?");
-      params.push(status);
-    }
+        if (status) {
+            where.push("b.status = ?");
+            params.push(status);
+        }
 
-    // Date range (best practice: allow From-only, To-only, or both)
-    if (dateFrom) {
-      where.push("b.bookingDate >= ?");
-      params.push(dateFrom);
-    }
-    if (dateTo) {
-      where.push("b.bookingDate <= ?");
-      params.push(dateTo);
-    }
+        // Date range (best practice: allow From-only, To-only, or both)
+        if (dateFrom) {
+            where.push("b.bookingDate >= ?");
+            params.push(dateFrom);
+        }
+        if (dateTo) {
+            where.push("b.bookingDate <= ?");
+            params.push(dateTo);
+        }
 
-    if (ownerEmail) {
-      where.push("o.email LIKE ?");
-      params.push(`%${ownerEmail}%`);
-    }
+        if (ownerEmail) {
+            where.push("o.email LIKE ?");
+            params.push(`%${ownerEmail}%`);
+        }
 
-    if (serviceId && /^\d+$/.test(serviceId)) {
-      where.push("bs.serviceId = ?");
-      params.push(parseInt(serviceId, 10));
-    }
+        if (serviceId && /^\d+$/.test(serviceId)) {
+            where.push("bs.serviceId = ?");
+            params.push(parseInt(serviceId, 10));
+        }
 
-    if (where.length > 0) {
-      sql += " WHERE " + where.join(" AND ");
-    }
+        if (where.length > 0) {
+            sql += " WHERE " + where.join(" AND ");
+        }
 
-    sql += `
+        sql += `
       GROUP BY
         b.bookingId, b.bookingDate, b.startTime, b.endTime, b.status,
         o.firstName, o.lastName, o.email, o.phone,
@@ -153,22 +159,22 @@ app.get("/bookings", async function (req, res) {
       ORDER BY b.bookingId DESC
     `;
 
-    const [rows] = await dbConnection.query(sql, params);
+        const [rows] = await dbConnection.query(sql, params);
 
-    // Flash: read once, then clear
-    const flashMessage = req.session.flashMessage || null;
-    req.session.flashMessage = null;
+        // Flash: read once, then clear
+        const flashMessage = req.session.flashMessage || null;
+        req.session.flashMessage = null;
 
-    res.render("05_bookings_index", {
-      bookings: rows,
-      services,
-      filters,
-      flashMessage
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error loading bookings");
-  }
+        res.render("05_bookings_index", {
+            bookings: rows,
+            services,
+            filters,
+            flashMessage
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error loading bookings");
+    }
 });
 
 
@@ -232,8 +238,8 @@ app.post("/bookings/create", async (req, res) => {
         } = req.body;
 
         const endTime = req.body.endTime && String(req.body.endTime).trim() !== ""
-        ? req.body.endTime
-        : null;
+            ? req.body.endTime
+            : null;
 
         // services from checklist
         let serviceIds = req.body.serviceIds;
@@ -375,89 +381,89 @@ app.get("/bookings/:bookingId/edit", async (req, res) => {
 
 // post edited booking - replace the booking details with edit
 app.post("/bookings/:bookingId/update", async (req, res) => {
-  try {
-    const bookingId = req.params.bookingId;
+    try {
+        const bookingId = req.params.bookingId;
 
-    const {
-      bookingDate,
-      startTime,
-      status,
-      petName,
-      species,
-      ownerFirstName,
-      ownerLastName,
-      ownerEmail,
-      ownerPhone
-    } = req.body;
+        const {
+            bookingDate,
+            startTime,
+            status,
+            petName,
+            species,
+            ownerFirstName,
+            ownerLastName,
+            ownerEmail,
+            ownerPhone
+        } = req.body;
 
-    const endTime = req.body.endTime && String(req.body.endTime).trim() !== ""
-    ? req.body.endTime
-    :null;
+        const endTime = req.body.endTime && String(req.body.endTime).trim() !== ""
+            ? req.body.endTime
+            : null;
 
-    // serviceIds sanitise
-    let serviceIds = req.body.serviceIds;
-    if (Array.isArray(serviceIds)) {
-      // ok
-    } else if (serviceIds) {
-      serviceIds = [serviceIds];
-    } else {
-      serviceIds = [];
+        // serviceIds sanitise
+        let serviceIds = req.body.serviceIds;
+        if (Array.isArray(serviceIds)) {
+            // ok
+        } else if (serviceIds) {
+            serviceIds = [serviceIds];
+        } else {
+            serviceIds = [];
+        }
+
+        serviceIds = serviceIds
+            .map(v => String(v).trim())
+            .filter(v => v !== "" && /^\d+$/.test(v))
+            .map(v => parseInt(v, 10));
+
+        if (serviceIds.length === 0) {
+            req.session.flashMessage = "Please select at least one service.";
+            return res.redirect(`/bookings/${bookingId}/edit`);
+        }
+
+        // Get ownerId + petId for this booking
+        const [idRows] = await dbConnection.query(
+            "SELECT ownerId, petId FROM bookings WHERE bookingId = ? LIMIT 1",
+            [bookingId]
+        );
+        if (idRows.length === 0) return res.status(404).send("Booking not found");
+
+        const ownerId = idRows[0].ownerId;
+        const petId = idRows[0].petId;
+
+        // Update bookings
+        await dbConnection.query(
+            "UPDATE bookings SET bookingDate = ?, startTime = ?, endTime = ?, status = ? WHERE bookingId = ?",
+            [bookingDate, startTime, endTime, status, bookingId]
+        );
+
+        // Update owner
+        await dbConnection.query(
+            "UPDATE owners SET firstName = ?, lastName = ?, email = ?, phone = ? WHERE ownerId = ?",
+            [ownerFirstName, ownerLastName, ownerEmail, ownerPhone, ownerId]
+        );
+
+        // Update pet
+        await dbConnection.query(
+            "UPDATE pets SET petName = ?, species = ? WHERE petId = ?",
+            [petName, species, petId]
+        );
+
+        // Replace bookingServices
+        await dbConnection.query("DELETE FROM bookingServices WHERE bookingId = ?", [bookingId]);
+
+        for (const serviceId of serviceIds) {
+            await dbConnection.query(
+                "INSERT INTO bookingServices (bookingId, serviceId) VALUES (?, ?)",
+                [bookingId, serviceId]
+            );
+        }
+
+        req.session.flashMessage = `Booking ${bookingId} is successfully updated`;
+        res.redirect("/bookings");
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error updating booking");
     }
-
-    serviceIds = serviceIds
-      .map(v => String(v).trim())
-      .filter(v => v !== "" && /^\d+$/.test(v))
-      .map(v => parseInt(v, 10));
-
-    if (serviceIds.length === 0) {
-      req.session.flashMessage = "Please select at least one service.";
-      return res.redirect(`/bookings/${bookingId}/edit`);
-    }
-
-    // Get ownerId + petId for this booking
-    const [idRows] = await dbConnection.query(
-      "SELECT ownerId, petId FROM bookings WHERE bookingId = ? LIMIT 1",
-      [bookingId]
-    );
-    if (idRows.length === 0) return res.status(404).send("Booking not found");
-
-    const ownerId = idRows[0].ownerId;
-    const petId = idRows[0].petId;
-
-    // Update bookings
-    await dbConnection.query(
-      "UPDATE bookings SET bookingDate = ?, startTime = ?, endTime = ?, status = ? WHERE bookingId = ?",
-      [bookingDate, startTime, endTime, status, bookingId]
-    );
-
-    // Update owner
-    await dbConnection.query(
-      "UPDATE owners SET firstName = ?, lastName = ?, email = ?, phone = ? WHERE ownerId = ?",
-      [ownerFirstName, ownerLastName, ownerEmail, ownerPhone, ownerId]
-    );
-
-    // Update pet
-    await dbConnection.query(
-      "UPDATE pets SET petName = ?, species = ? WHERE petId = ?",
-      [petName, species, petId]
-    );
-
-    // Replace bookingServices
-    await dbConnection.query("DELETE FROM bookingServices WHERE bookingId = ?", [bookingId]);
-
-    for (const serviceId of serviceIds) {
-      await dbConnection.query(
-        "INSERT INTO bookingServices (bookingId, serviceId) VALUES (?, ?)",
-        [bookingId, serviceId]
-      );
-    }
-
-    req.session.flashMessage = `Booking ${bookingId} is successfully updated`;
-    res.redirect("/bookings");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error updating booking");
-  }
 });
 
 // delete from bookings table
