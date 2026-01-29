@@ -73,8 +73,6 @@ app.get("/", function (req, res) {
     res.render('01_home', { title: "PawfectCare"});
 });
 
-
-
 // Read from bookings table
 app.get("/bookings", async function (req, res) {
     try {
@@ -529,6 +527,20 @@ app.post("/bookings/:bookingId/delete", async (req, res) => {
         console.error(err);
         res.status(500).send("Error deleting booking");
     }
+});
+
+app.get('/shop', (req, res) => res.render('shop'));        // create views/shop.ejs
+app.get('/cart', (req, res) => res.render('cart'));        // create views/cart.ejs
+app.get('/signup', (req, res) => res.render('signup'));    // create views/signup.ejs
+app.get('/signin', (req, res) => res.render('signin'));    // create views/signin.ejs
+
+app.get('/login/staff', (req, res) => res.render('login_staff'));
+app.get('/login/admin', (req, res) => res.render('login_admin'));
+
+// Newsletter endpoint (dummy)
+app.post('/newsletter', (req, res) => {
+  // TODO: store email in MariaDB (newsletter_subscribers)
+  res.redirect('/?subscribed=1');
 });
 
 app.listen(3000, () => {

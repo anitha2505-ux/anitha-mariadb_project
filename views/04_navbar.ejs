@@ -1,21 +1,50 @@
-<!-- views/04_navbar.ejs -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-sm">
-  <div class="container">
-    <a class="navbar-brand fw-semibold" href="/">
-      <img class="pc-brand-logo" src="/images/pawfectcare-logo.png" alt="PawfectCare">
-      PawfectCare</a>
+<nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
+  <div class="container-fluid px-3">
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#pcNav" aria-controls="pcNav" aria-expanded="false">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+
+      <!-- Brand text (ONLY ONE) -->
+      <span class="pc-navbar-brand-text">
+        PawfectCare
+      </span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div class="collapse navbar-collapse" id="pcNav">
-      <ul class="navbar-nav ms-auto gap-2">
-        <li class="nav-item"><a class="btn btn-outline-light btn-sm" href="/">Home</a></li>
-        <li class="nav-item"><a class="btn btn-outline-light btn-sm" href="/services">Services</a></li>
-        <li class="nav-item"><a class="btn btn-outline-light btn-sm" href="/bookings">Bookings</a></li>
-        <li class="nav-item"><a class="btn btn-outline-light btn-sm" href="/pets">Pets</a></li>
-        <li class="nav-item"><a class="btn btn-outline-light btn-sm" href="/owners">Owners</a></li>
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-3">
+
+        <!-- HOME -->
+        <li class="nav-item">
+          <a class="nav-link" href="/">Home</a>
+        </li>
+        
+        <li class="nav-item">
+          <a class="nav-link" href="/services">Services</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="/bookings">Bookings</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="/products">Products</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="btn pc-member-btn btn-sm" href="/login">
+            Member
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="btn btn-secondary btn-sm" href="/admin/login">
+            Admin
+          </a>
+        </li>
+
       </ul>
     </div>
   </div>

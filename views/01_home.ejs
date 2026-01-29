@@ -1,290 +1,914 @@
 <!-- views/01_home.ejs -->
+<!doctype html>
+<html lang="en">
 
-<div class="pc-home">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PawfectCare | Home</title>
 
-  <!-- HERO -->
-  <section class="pc-hero pc-card">
-    <div class="pc-hero-grid">
-      <div class="pc-hero-copy">
-        <div class="pc-hero-badge">
-          🐾 Singapore • Lifestyle Petcare
-        </div>
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-        <h1 class="pc-hero-title">
-          PawfectCare
-        </h1>
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-        <p class="pc-hero-subtitle">
-          Classy care, cheerful vibes — grooming, daycare, wellness, and happy tails.
-        </p>
+  <!-- Fonts (Poppins + Nunito) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Poppins:wght@600;700;800&display=swap"
+    rel="stylesheet">
 
-        <div class="pc-hero-cta">
-          <a href="/bookings/new" class="btn btn-primary pc-cta-btn">
-            <i class="bi bi-calendar2-check"></i>
-            <span class="ms-1">Book Appointment</span>
-          </a>
+  <!-- PawfectCare UI (paste your full CSS into /public/css/pawfectcare-ui.css) -->
+  <link rel="stylesheet" href="/css/pawfectcare-ui.css">
 
-          <a href="/login" class="btn btn-outline-primary pc-cta-btn">
-            <i class="bi bi-person-circle"></i>
-            <span class="ms-1">Member Login</span>
-          </a>
+  <style>
+    /* Page-only helpers */
+    .pc-page {
+      min-height: 100vh;
+    }
 
-          <a href="/admin/login" class="btn btn-secondary pc-cta-btn">
-            <i class="bi bi-shield-lock"></i>
-            <span class="ms-1">Admin Login</span>
-          </a>
-        </div>
+    .pc-hero-full {
+      position: relative;
+      min-height: calc(100vh - 72px);
+      background:
+        linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
+        url("/images/Hero.jpg") center center / cover no-repeat;
+      display: flex;
+      align-items: center;
+    }
 
-        <div class="pc-hero-mini">
-          <div class="pc-mini-item">
-            <i class="bi bi-stars"></i>
-            <div>
-              <div class="pc-mini-title">Cheerful, modern service</div>
-              <div class="pc-mini-sub">Fast booking, clear status updates</div>
-            </div>
+    .pc-hero-logo-sticky {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+      z-index: 2;
+    }
+
+    .pc-hero-logo-sticky img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+    }
+
+    .pc-overlay-card {
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+    }
+
+    .pc-section-pad {
+      padding: 56px 0;
+    }
+
+    .pc-muted-small {
+      color: var(--pc-muted);
+      font-size: 13px;
+    }
+
+    .pc-price {
+      font-family: var(--pc-font-h);
+      font-weight: 800;
+    }
+
+    /* Chatbot */
+    .pc-chatbot {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 9999;
+    }
+
+    .pc-chatbot-panel {
+      width: 340px;
+      max-width: calc(100vw - 36px);
+      height: 420px;
+      max-height: calc(100vh - 120px);
+      display: none;
+      overflow: hidden;
+      border-radius: 18px;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.20);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      background: #fff;
+    }
+
+    .pc-chatbot-panel.open {
+      display: block;
+    }
+
+    .pc-chatbot-header {
+      background: var(--pc-coral);
+      color: #fff;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-family: var(--pc-font-h);
+      font-weight: 800;
+    }
+
+    .pc-chatbot-body {
+      padding: 12px 12px 0;
+      height: 320px;
+      overflow: auto;
+      background: #fffdf9;
+    }
+
+    .pc-bubble {
+      max-width: 84%;
+      padding: 10px 12px;
+      border-radius: 14px;
+      margin: 8px 0;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
+      font-size: 14px;
+      line-height: 1.35;
+      background: #fff;
+    }
+
+    .pc-bubble.me {
+      margin-left: auto;
+      background: rgba(247, 181, 56, 0.16);
+      border-color: rgba(247, 181, 56, 0.28);
+    }
+
+    .pc-bubble.bot {
+      margin-right: auto;
+      background: rgba(216, 87, 42, 0.10);
+      border-color: rgba(216, 87, 42, 0.18);
+    }
+
+    .pc-chatbot-footer {
+      padding: 10px 12px 12px;
+      background: #fff;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .pc-chatbot-toggle {
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      border: 1px solid rgba(0, 0, 0, 0.10);
+      background: var(--pc-amber);
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.18);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+    }
+
+    .pc-chatbot-toggle i {
+      font-size: 22px;
+      color: #4A3300;
+    }
+  </style>
+</head>
+
+<body class="pc-body pc-page">
+
+  <!-- 2) Section 1: Hero Image (full screen) -->
+  <header class="pc-hero-full">
+    <!-- Logo image sticky on top of the Hero Image -->
+    <div class="pc-hero-logo-sticky" title="PawfectCare">
+      <img src="/images/pawfectcare-logo.png" alt="PawfectCare logo" onerror="this.style.display='none'">
+      <i class="bi bi-heart-fill text-danger" style="display:none"></i>
+    </div>
+
+    <div class="pc-hero-inner">
+      <div class="row g-4 align-items-center">
+        <div class="col-lg-7 text-white">
+          <h1 class="display-4 fw-bold">Happy pet care, near you.</h1>
+          <h4 class="mt-3 fw-semibold" style="color: rgba(225, 172, 110, 0.92);">
+            Grooming, daycare &amp; wellness, all in one cheerful place.
+          </h4>
+
+          <div class="d-flex flex-wrap gap-2 mt-4">
+            <a class="btn btn-primary pc-hero-btn" href="/bookings/new">
+              <i class="bi bi-calendar2-check me-2"></i>Book Appointment
+            </a>
+            <a class="btn btn-secondary pc-hero-btn" href="/services">
+              <i class="bi bi-grid me-2"></i>Explore Services
+            </a>
           </div>
-          <div class="pc-mini-item">
-            <i class="bi bi-heart-pulse"></i>
-            <div>
-              <div class="pc-mini-title">Care-first approach</div>
-              <div class="pc-mini-sub">Notes, allergies, and preferences (V2)</div>
+
+          <div class="mt-3 pc-muted-small" style="color: rgba(255,255,255,0.85);">
+            Trusted care. Friendly staff. Simple booking.
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="pc-overlay-card p-3 p-md-4">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <strong style="font-family: var(--pc-font-h);">Quick Booking</strong>
             </div>
+
+            <form class="row g-2" method="GET" action="/search">
+              <div class="col-12">
+                <label class="form-label">Service</label>
+                <select class="form-select" name="serviceId">
+                  <option value="">Any service</option>
+                  <% if (typeof services !=="undefined" && services && services.length) { %>
+                    <% services.forEach(s=> { %>
+                      <option value="<%= s.serviceId %>">
+                        <%= s.serviceName %>
+                      </option>
+                      <% }) %>
+                        <% } else { %>
+                          <option value="1">Grooming</option>
+                          <option value="2">Training</option>
+                          <option value="3">Boarding</option>
+                          <option value="4">Transport</option>
+                          <% } %>
+                </select>
+              </div>
+
+              <div class="col-6">
+                <label class="form-label">From</label>
+                <input class="form-control" type="date" name="dateFrom">
+              </div>
+
+              <div class="col-6">
+                <label class="form-label">To</label>
+                <input class="form-control" type="date" name="dateTo">
+              </div>
+
+              <div class="col-12">
+                <label class="form-label">Owner Email (optional)</label>
+                <input class="form-control" type="email" name="ownerEmail" placeholder="name@email.com">
+              </div>
+
+              <div class="col-12 d-grid mt-2">
+                <button class="btn btn-success" type="submit">
+                  <i class="bi bi-search me-2"></i>Find Availability
+                </button>
+              </div>
+
+
+            </form>
           </div>
         </div>
       </div>
+    </div>
+  </header>
 
-      <div class="pc-hero-media">
-        <!-- Replace this with your actual hero image later -->
-        <div class="pc-hero-image" role="img" aria-label="Happy pets hero image"></div>
+  <!-- 3) Section 2: Services -->
+  <section class="pc-section-pad">
+    <div class="container">
+      <div class="d-flex align-items-end justify-content-between flex-wrap gap-2 mb-3">
+        <div>
+          <h2 class="pc-section-title mb-1">Services</h2>
+          <div class="pc-muted">Your pet’s happy place starts here.</div>
+        </div>
+        <a class="btn btn-outline-primary" href="/services">
+          View all services <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+      </div>
 
-        <div class="pc-hero-fun">
-          😄 “Is this a treat? …or a shampoo?”<br>
-          <span>— every dog, probably</span>
+      <div class="row g-3">
+        <div class="col-md-6 col-lg-3">
+          <div class="pc-card h-100">
+            <div class="pc-card-body">
+              <img src="/images/services-grooming.jpg" class="img-fluid rounded-4 mb-3" alt="Grooming"
+                onerror="this.style.display='none'">
+              <h5 class="mb-2">Grooming Services</h5>
+              <p class="pc-muted mb-3">Bath, cut, nail trim, and tidy-ups for a fresh, confident look.</p>
+              <a href="/services#grooming" class="btn btn-sm btn-primary">Read more</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+          <div class="pc-card h-100">
+            <div class="pc-card-body">
+              <img src="/images/services-training.jpg" class="img-fluid rounded-4 mb-3" alt="Training"
+                onerror="this.style.display='none'">
+              <h5 class="mb-2">Training Services</h5>
+              <p class="pc-muted mb-3">Positive reinforcement training for confident, well-mannered pets.</p>
+              <a href="/services#training" class="btn btn-sm btn-primary">Read more</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+          <div class="pc-card h-100">
+            <div class="pc-card-body">
+              <img src="/images/services-boarding.jpg" class="img-fluid rounded-4 mb-3" alt="Boarding"
+                onerror="this.style.display='none'">
+              <h5 class="mb-2">Boarding Services</h5>
+              <p class="pc-muted mb-3">Safe, cozy stays with supervised play and daily wellbeing checks.</p>
+              <a href="/services#boarding" class="btn btn-sm btn-primary">Read more</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+          <div class="pc-card h-100">
+            <div class="pc-card-body">
+              <img src="/images/services-transport.jpg" class="img-fluid rounded-4 mb-3" alt="Transport"
+                onerror="this.style.display='none'">
+              <h5 class="mb-2">Transport Services</h5>
+              <p class="pc-muted mb-3">Door-to-door pick-up and drop-off for appointments and daycare.</p>
+              <a href="/services#transport" class="btn btn-sm btn-primary">Read more</a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- SERVICES CAROUSEL -->
-  <section class="pc-section">
-    <div class="pc-section-head">
-      <h2 class="pc-section-title">Services</h2>
-      <div class="pc-section-sub">Swipe through what we do best 🐶</div>
-    </div>
-
-    <div id="pcServicesCarousel" class="carousel slide pc-card" data-bs-ride="carousel">
-      <div class="carousel-inner">
-
-        <div class="carousel-item active">
-          <div class="pc-carousel-slide">
-            <div class="pc-carousel-img pc-img-1"></div>
-            <div class="pc-carousel-copy">
-              <h3>Grooming</h3>
-              <p>Fresh coats, neat paws, and a confident strut.</p>
-              <a class="btn btn-primary" href="/bookings/new">Book Grooming</a>
-            </div>
-          </div>
+  <!-- 4) Section 3: Products (carousel) -->
+  <section class="pc-section-pad" style="background: rgba(247,181,56,0.08);">
+    <div class="container">
+      <div class="d-flex align-items-end justify-content-between flex-wrap gap-2 mb-3">
+        <div>
+          <h2 class="pc-section-title mb-1">Products</h2>
+          <div class="pc-muted">Everyday essentials for happy tails.</div>
         </div>
-
-        <div class="carousel-item">
-          <div class="pc-carousel-slide">
-            <div class="pc-carousel-img pc-img-2"></div>
-            <div class="pc-carousel-copy">
-              <h3>Daycare</h3>
-              <p>Supervised playtime and calm rest zones.</p>
-              <a class="btn btn-primary" href="/bookings/new">Book Daycare</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="carousel-item">
-          <div class="pc-carousel-slide">
-            <div class="pc-carousel-img pc-img-3"></div>
-            <div class="pc-carousel-copy">
-              <h3>Wellness</h3>
-              <p>Comfort checks, hygiene routines, and care guidance.</p>
-              <a class="btn btn-primary" href="/bookings/new">Book Wellness</a>
-            </div>
-          </div>
-        </div>
-
+        <a class="btn btn-outline-primary" href="/shop">
+          Visit shop <i class="bi bi-arrow-right ms-1"></i>
+        </a>
       </div>
 
-      <button class="carousel-control-prev" type="button" data-bs-target="#pcServicesCarousel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-      </button>
+      <div id="pcProducts" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#pcProducts" data-bs-slide-to="0" class="active"></button>
+          <button type="button" data-bs-target="#pcProducts" data-bs-slide-to="1"></button>
+        </div>
 
-      <button class="carousel-control-next" type="button" data-bs-target="#pcServicesCarousel" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-      </button>
+        <div class="carousel-inner">
+          <!-- Slide 1 -->
+          <div class="carousel-item active">
+            <div class="row g-3">
+              <div class="col-md-6 col-lg-3">
+                <div class="pc-card h-100">
+                  <div class="pc-card-body">
+                    <img src="/images/prod-shampoo.jpg" class="img-fluid rounded-4 mb-3" alt="Shampoo"
+                      onerror="this.style.display='none'">
+                    <h6 class="mb-1">Gentle Oat Shampoo</h6>
+                    <div class="pc-muted mb-2">Sensitive-skin friendly</div>
+                    <div class="d-flex align-items-center justify-content-between">
+                      <span class="pc-price">$18.90</span>
+                      <button class="btn btn-sm btn-success" type="button" onclick="pcAddToCart('Gentle Oat Shampoo')">
+                        <i class="bi bi-bag-plus"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-      <div class="carousel-indicators pc-carousel-dots">
-        <button type="button" data-bs-target="#pcServicesCarousel" data-bs-slide-to="0" class="active" aria-current="true"></button>
-        <button type="button" data-bs-target="#pcServicesCarousel" data-bs-slide-to="1"></button>
-        <button type="button" data-bs-target="#pcServicesCarousel" data-bs-slide-to="2"></button>
+              <div class="col-md-6 col-lg-3">
+                <div class="pc-card h-100">
+                  <div class="pc-card-body">
+                    <img src="/images/prod-treats.jpg" class="img-fluid rounded-4 mb-3" alt="Treats"
+                      onerror="this.style.display='none'">
+                    <h6 class="mb-1">Training Treat Bites</h6>
+                    <div class="pc-muted mb-2">Reward-ready</div>
+                    <div class="d-flex align-items-center justify-content-between">
+                      <span class="pc-price">$12.50</span>
+                      <button class="btn btn-sm btn-success" type="button"
+                        onclick="pcAddToCart('Training Treat Bites')">
+                        <i class="bi bi-bag-plus"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-3">
+                <div class="pc-card h-100">
+                  <div class="pc-card-body">
+                    <img src="/images/prod-leash.jpg" class="img-fluid rounded-4 mb-3" alt="Leash"
+                      onerror="this.style.display='none'">
+                    <h6 class="mb-1">Comfort Leash</h6>
+                    <div class="pc-muted mb-2">Soft grip, strong hold</div>
+                    <div class="d-flex align-items-center justify-content-between">
+                      <span class="pc-price">$24.90</span>
+                      <button class="btn btn-sm btn-success" type="button" onclick="pcAddToCart('Comfort Leash')">
+                        <i class="bi bi-bag-plus"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-3">
+                <div class="pc-card h-100">
+                  <div class="pc-card-body">
+                    <img src="/images/prod-toy.jpg" class="img-fluid rounded-4 mb-3" alt="Toy"
+                      onerror="this.style.display='none'">
+                    <h6 class="mb-1">Chew Toy Duo</h6>
+                    <div class="pc-muted mb-2">Durable fun</div>
+                    <div class="d-flex align-items-center justify-content-between">
+                      <span class="pc-price">$16.00</span>
+                      <button class="btn btn-sm btn-success" type="button" onclick="pcAddToCart('Chew Toy Duo')">
+                        <i class="bi bi-bag-plus"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 2 -->
+          <div class="carousel-item">
+            <div class="row g-3">
+              <div class="col-md-6 col-lg-3">
+                <div class="pc-card h-100">
+                  <div class="pc-card-body">
+                    <img src="/images/prod-vitamin.jpg" class="img-fluid rounded-4 mb-3" alt="Vitamins"
+                      onerror="this.style.display='none'">
+                    <h6 class="mb-1">Wellness Chews</h6>
+                    <div class="pc-muted mb-2">Daily support</div>
+                    <div class="d-flex align-items-center justify-content-between">
+                      <span class="pc-price">$29.90</span>
+                      <button class="btn btn-sm btn-success" type="button" onclick="pcAddToCart('Wellness Chews')">
+                        <i class="bi bi-bag-plus"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-3">
+                <div class="pc-card h-100">
+                  <div class="pc-card-body">
+                    <img src="/images/prod-bowl.jpg" class="img-fluid rounded-4 mb-3" alt="Bowl"
+                      onerror="this.style.display='none'">
+                    <h6 class="mb-1">Non-slip Bowl</h6>
+                    <div class="pc-muted mb-2">Easy clean</div>
+                    <div class="d-flex align-items-center justify-content-between">
+                      <span class="pc-price">$14.90</span>
+                      <button class="btn btn-sm btn-success" type="button" onclick="pcAddToCart('Non-slip Bowl')">
+                        <i class="bi bi-bag-plus"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-3">
+                <div class="pc-card h-100">
+                  <div class="pc-card-body">
+                    <img src="/images/prod-brush.jpg" class="img-fluid rounded-4 mb-3" alt="Brush"
+                      onerror="this.style.display='none'">
+                    <h6 class="mb-1">Grooming Brush</h6>
+                    <div class="pc-muted mb-2">Smooth coat</div>
+                    <div class="d-flex align-items-center justify-content-between">
+                      <span class="pc-price">$19.90</span>
+                      <button class="btn btn-sm btn-success" type="button" onclick="pcAddToCart('Grooming Brush')">
+                        <i class="bi bi-bag-plus"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-3">
+                <div class="pc-card h-100">
+                  <div class="pc-card-body">
+                    <img src="/images/prod-bed.jpg" class="img-fluid rounded-4 mb-3" alt="Bed"
+                      onerror="this.style.display='none'">
+                    <h6 class="mb-1">Cozy Pet Bed</h6>
+                    <div class="pc-muted mb-2">Nap-approved</div>
+                    <div class="d-flex align-items-center justify-content-between">
+                      <span class="pc-price">$39.90</span>
+                      <button class="btn btn-sm btn-success" type="button" onclick="pcAddToCart('Cozy Pet Bed')">
+                        <i class="bi bi-bag-plus"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#pcProducts" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#pcProducts" data-bs-slide="next">
+          <span class="carousel-control-next-icon"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
       </div>
     </div>
   </section>
 
-  <!-- PRODUCTS GALLERY (for later ecommerce) -->
-  <section class="pc-section">
-    <div class="pc-section-head">
-      <h2 class="pc-section-title">Products</h2>
-      <div class="pc-section-sub">Gallery now, e-commerce later 🦴</div>
-    </div>
+  <!-- 5) Section 4: Outlets -->
+  <section class="pc-section-pad">
+    <div class="container">
+      <div class="mb-3">
+        <h2 class="pc-section-title mb-1">Outlets</h2>
+        <div class="pc-muted">Three convenient locations across Singapore.</div>
+      </div>
 
-    <div class="pc-grid-4">
-      <% const products = [
-        { name: "Shampoo (Gentle)", price: "$18", icon: "bi-droplet" },
-        { name: "Dental Chews", price: "$12", icon: "bi-emoji-smile" },
-        { name: "Paw Balm", price: "$15", icon: "bi-heart" },
-        { name: "Travel Bottle", price: "$9", icon: "bi-bag" }
-      ]; %>
+      <div class="row g-3">
+        <!-- Marsiling -->
+        <div class="col-lg-4">
+          <div class="pc-card h-100">
+            <div class="pc-card-body">
+              <div class="d-flex gap-2 align-items-start">
+                <i class="bi bi-geo-alt-fill fs-5" style="color: var(--pc-coral);"></i>
+                <div>
+                  <h5 class="mb-1">Marsiling</h5>
+                  <div class="pc-muted">Postal Code: 730000</div>
+                </div>
+              </div>
 
-      <% products.forEach(p => { %>
-        <div class="pc-product pc-card">
-          <div class="pc-product-img">
-            <i class="bi <%= p.icon %>"></i>
+              <div class="mt-3 pc-muted">
+                18 Pet Street, #02-01, Singapore 730000<br>
+                +65 6123 4567
+              </div>
+
+              <div class="ratio ratio-16x9 mt-3 rounded-4 overflow-hidden border">
+                <!-- OpenStreetMap embed (no API key) -->
+                <iframe
+                  src="https://www.openstreetmap.org/export/embed.html?bbox=103.770%2C1.430%2C103.785%2C1.442&layer=mapnik"
+                  loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+              </div>
+            </div>
           </div>
-          <div class="pc-product-body">
-            <div class="pc-product-name"><%= p.name %></div>
-            <div class="pc-product-price"><%= p.price %></div>
-            <button class="btn btn-secondary" type="button" disabled>
-              Coming soon
+        </div>
+
+        <!-- Lavender -->
+        <div class="col-lg-4">
+          <div class="pc-card h-100">
+            <div class="pc-card-body">
+              <div class="d-flex gap-2 align-items-start">
+                <i class="bi bi-geo-alt-fill fs-5" style="color: var(--pc-coral);"></i>
+                <div>
+                  <h5 class="mb-1">Lavender</h5>
+                  <div class="pc-muted">Postal Code: 330000</div>
+                </div>
+              </div>
+
+              <div class="mt-3 pc-muted">
+                77 Wellness Lane, #01-08, Singapore 330000<br>
+                +65 6234 5678
+              </div>
+
+              <div class="ratio ratio-16x9 mt-3 rounded-4 overflow-hidden border">
+                <iframe
+                  src="https://www.openstreetmap.org/export/embed.html?bbox=103.856%2C1.302%2C103.871%2C1.314&layer=mapnik"
+                  loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Punggol -->
+        <div class="col-lg-4">
+          <div class="pc-card h-100">
+            <div class="pc-card-body">
+              <div class="d-flex gap-2 align-items-start">
+                <i class="bi bi-geo-alt-fill fs-5" style="color: var(--pc-coral);"></i>
+                <div>
+                  <h5 class="mb-1">Punggol</h5>
+                  <div class="pc-muted">Postal Code: 820000</div>
+                </div>
+              </div>
+
+              <div class="mt-3 pc-muted">
+                5 Happy Paw Walk, #03-12, Singapore 820000<br>
+                +65 6345 6789
+              </div>
+
+              <div class="ratio ratio-16x9 mt-3 rounded-4 overflow-hidden border">
+                <iframe
+                  src="https://www.openstreetmap.org/export/embed.html?bbox=103.902%2C1.398%2C103.918%2C1.410&layer=mapnik"
+                  loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 6) Section 5: Newsletter Subscription -->
+  <section class="pc-section-pad" style="background: rgba(216,87,42,0.06);">
+    <div class="container">
+      <div class="row g-3 align-items-center">
+        <div class="col-lg-6">
+          <h2 class="pc-section-title mb-1">Newsletter</h2>
+          <div class="pc-muted">Get promos, new services, and event updates—no spam, only pawsitivity.</div>
+        </div>
+        <div class="col-lg-6">
+          <form class="pc-card p-3 p-md-4" method="POST" action="/newsletter">
+            <label class="form-label">Email Address</label>
+            <div class="input-group">
+              <input type="email" class="form-control" name="email" placeholder="you@email.com" required>
+              <button class="btn btn-primary" type="submit">
+                Subscribe <i class="bi bi-arrow-right ms-1"></i>
+              </button>
+            </div>
+            <div class="pc-muted-small mt-2">You can unsubscribe anytime.</div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7) Section 6: Events -->
+  <section class="pc-section-pad">
+    <div class="container">
+      <div class="mb-3">
+        <h2 class="pc-section-title mb-1">Events</h2>
+        <div class="pc-muted">Join our upcoming community events.</div>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-6 col-lg-4">
+          <div class="pc-card h-100">
+            <div class="pc-card-body">
+              <h5 class="mb-2">Pawfect Adoption Day</h5>
+              <div class="pc-muted mb-2"><i class="bi bi-calendar-event me-2"></i>Saturday • 10:00 AM</div>
+              <div class="pc-muted mb-3"><i class="bi bi-geo me-2"></i>Lavender Outlet</div>
+              <p class="pc-muted">Meet friendly rescue partners and learn how to welcome a new pet at home.</p>
+              <a class="btn btn-sm btn-outline-primary" href="/events#adoption">View details</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+          <div class="pc-card h-100">
+            <div class="pc-card-body">
+              <h5 class="mb-2">Basic Obedience Workshop</h5>
+              <div class="pc-muted mb-2"><i class="bi bi-calendar-event me-2"></i>Sunday • 2:00 PM</div>
+              <div class="pc-muted mb-3"><i class="bi bi-geo me-2"></i>Marsiling Outlet</div>
+              <p class="pc-muted">Short, practical techniques for leash walking, recall, and calm greetings.</p>
+              <a class="btn btn-sm btn-outline-primary" href="/events#obedience">View details</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+          <div class="pc-card h-100">
+            <div class="pc-card-body">
+              <h5 class="mb-2">Wellness Check &amp; Nutrition Talk</h5>
+              <div class="pc-muted mb-2"><i class="bi bi-calendar-event me-2"></i>Wednesday • 6:30 PM</div>
+              <div class="pc-muted mb-3"><i class="bi bi-geo me-2"></i>Punggol Outlet</div>
+              <p class="pc-muted">A friendly session on diet basics, common sensitivities, and coat health.</p>
+              <a class="btn btn-sm btn-outline-primary" href="/events#wellness">View details</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 8) Section 7: FAQs -->
+  <section class="pc-section-pad" style="background: rgba(247,181,56,0.08);">
+    <div class="container">
+      <div class="mb-3">
+        <h2 class="pc-section-title mb-1">FAQs</h2>
+        <div class="pc-muted">Quick answers to common questions.</div>
+      </div>
+
+      <div class="accordion pc-card" id="pcFaq">
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+              Do I need an appointment for grooming?
             </button>
-          </div>
-        </div>
-      <% }) %>
-    </div>
-  </section>
-
-  <!-- OUTLETS -->
-  <section class="pc-section">
-    <div class="pc-section-head">
-      <h2 class="pc-section-title">Outlets</h2>
-      <div class="pc-section-sub">Find us across Singapore</div>
-    </div>
-
-    <div class="pc-grid-3">
-      <div class="pc-card pc-outlet">
-        <div class="pc-outlet-top">
-          <i class="bi bi-geo-alt"></i>
-          <div>
-            <div class="pc-outlet-name">PawfectCare • Central</div>
-            <div class="pc-outlet-sub">123 Example Rd, #01-01, Singapore</div>
-          </div>
-        </div>
-        <div class="pc-outlet-meta">
-          <div><i class="bi bi-clock"></i> 10am – 8pm</div>
-          <div><i class="bi bi-telephone"></i> +65 6123 4567</div>
-        </div>
-      </div>
-
-      <div class="pc-card pc-outlet">
-        <div class="pc-outlet-top">
-          <i class="bi bi-geo-alt"></i>
-          <div>
-            <div class="pc-outlet-name">PawfectCare • East</div>
-            <div class="pc-outlet-sub">456 Sample Ave, #02-08, Singapore</div>
-          </div>
-        </div>
-        <div class="pc-outlet-meta">
-          <div><i class="bi bi-clock"></i> 10am – 8pm</div>
-          <div><i class="bi bi-telephone"></i> +65 6234 5678</div>
-        </div>
-      </div>
-
-      <div class="pc-card pc-outlet">
-        <div class="pc-outlet-top">
-          <i class="bi bi-geo-alt"></i>
-          <div>
-            <div class="pc-outlet-name">PawfectCare • North</div>
-            <div class="pc-outlet-sub">789 Demo St, #03-12, Singapore</div>
-          </div>
-        </div>
-        <div class="pc-outlet-meta">
-          <div><i class="bi bi-clock"></i> 10am – 8pm</div>
-          <div><i class="bi bi-telephone"></i> +65 6345 6789</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CONTACT + FEEDBACK -->
-  <section class="pc-section">
-    <div class="pc-grid-2">
-      <div class="pc-card pc-contact">
-        <div class="pc-section-head">
-          <h2 class="pc-section-title">Contact</h2>
-          <div class="pc-section-sub">We reply fast — like a dog spotting snacks.</div>
-        </div>
-
-        <div class="pc-contact-list">
-          <div class="pc-contact-item">
-            <i class="bi bi-envelope"></i>
-            <div>
-              <div class="pc-contact-label">Email</div>
-              <div class="pc-contact-value">hello@pawfectcare.sg</div>
+          </h2>
+          <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#pcFaq">
+            <div class="accordion-body">
+              We recommend booking in advance to secure your preferred slot. Walk-ins may be accepted if we have
+              availability, but appointments are prioritised.
             </div>
           </div>
+        </div>
 
-          <div class="pc-contact-item">
-            <i class="bi bi-telephone"></i>
-            <div>
-              <div class="pc-contact-label">Phone</div>
-              <div class="pc-contact-value">+65 6123 4567</div>
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+              What vaccinations are required for daycare or boarding?
+            </button>
+          </h2>
+          <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#pcFaq">
+            <div class="accordion-body">
+              For safety, we typically require up-to-date core vaccinations. If you are unsure, bring your pet’s record
+              and we will advise based on age and service type.
             </div>
           </div>
+        </div>
 
-          <div class="pc-contact-item">
-            <i class="bi bi-instagram"></i>
-            <div>
-              <div class="pc-contact-label">Social</div>
-              <div class="pc-contact-value">@pawfectcare</div>
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+              How do you handle anxious or first-time pets?
+            </button>
+          </h2>
+          <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#pcFaq">
+            <div class="accordion-body">
+              We use calm, gentle handling and short breaks. We start slowly, observe stress signals, and adjust the
+              session to keep your pet comfortable.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+              Can I reschedule or cancel a booking?
+            </button>
+          </h2>
+          <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#pcFaq">
+            <div class="accordion-body">
+              Yes. You can reschedule or cancel through your booking page. For same-day changes, please call your outlet
+              so we can assist quickly.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+              Do you offer transport for pets?
+            </button>
+          </h2>
+          <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#pcFaq">
+            <div class="accordion-body">
+              Yes. Our transport service offers safe pick-up and drop-off for select areas. Availability depends on time
+              slots and route coverage.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq6">
+              What payment methods do you accept?
+            </button>
+          </h2>
+          <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#pcFaq">
+            <div class="accordion-body">
+              We accept common card payments and selected e-wallet options. If you are purchasing in-store, our staff
+              can guide you through checkout.
             </div>
           </div>
         </div>
       </div>
-
-      <div class="pc-card pc-feedback">
-        <div class="pc-section-head">
-          <h2 class="pc-section-title">Feedback</h2>
-          <div class="pc-section-sub">Tell us what your pet would say 😄</div>
-        </div>
-
-        <!-- For now: POST to a placeholder route you can implement later -->
-        <form method="POST" action="/feedback" class="pc-form">
-          <div class="mb-3">
-            <label class="form-label">Your Name</label>
-            <input class="form-control" name="name" type="text" required>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Email</label>
-            <input class="form-control" name="email" type="email" required>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Message</label>
-            <textarea class="form-control" name="message" rows="4" required></textarea>
-          </div>
-
-          <button type="submit" class="btn btn-primary pc-cta-btn">
-            <i class="bi bi-send"></i><span class="ms-1">Send Feedback</span>
-          </button>
-        </form>
-      </div>
     </div>
   </section>
 
-  <!-- FOOTER -->
-  <footer class="pc-footer">
-    <div class="pc-footer-inner">
-      <div>© <%= new Date().getFullYear() %> PawfectCare • Singapore</div>
-      <div class="pc-footer-note">Made with calm vibes and waggy tails 🐾</div>
+  <!-- 9) Section 8: Footer -->
+  <footer class="pc-section-pad" style="padding-top: 40px; padding-bottom: 40px;">
+    <div class="container">
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <h5 class="mb-2">PawfectCare</h5>
+          <div class="pc-muted">
+            HQ: 101 Pet Wellness Avenue, Singapore 000000
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="pc-muted">
+            Email: hello@pawfectcare.sg<br>
+            Contact: +65 6000 0000<br>
+            WhatsApp: +65 9000 0000
+          </div>
+        </div>
+      </div>
+
+      <div class="pc-muted-small mt-3">
+        © <span id="pcYear"></span> PawfectCare. All rights reserved.
+      </div>
     </div>
   </footer>
 
-</div>
+  <!-- 10) Chatbot (bottom right) -->
+  <div class="pc-chatbot">
+    <div class="pc-chatbot-panel" id="pcChatPanel">
+      <div class="pc-chatbot-header">
+        <span><i class="bi bi-chat-dots-fill me-2"></i>PawfectCare Chat</span>
+        <button class="btn btn-sm btn-light" type="button" onclick="pcToggleChat(false)">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <div class="pc-chatbot-body" id="pcChatBody">
+        <div class="pc-bubble bot">
+          Hello. I am PawfectCare Assistant. How may I help you today?
+          <div class="pc-muted-small mt-1">Try: “book grooming”, “opening hours”, “outlet address”.</div>
+        </div>
+      </div>
+
+      <div class="pc-chatbot-footer">
+        <form class="d-flex gap-2" onsubmit="pcSendChat(event)">
+          <input class="form-control" id="pcChatInput" placeholder="Type a message..." />
+          <button class="btn btn-primary" type="submit"><i class="bi bi-send"></i></button>
+        </form>
+      </div>
+    </div>
+
+    <div class="pc-chatbot-toggle" onclick="pcToggleChat(true)" title="Chat with PawfectCare">
+      <i class="bi bi-robot"></i>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // Footer year
+    document.getElementById('pcYear').textContent = new Date().getFullYear();
+
+    // Simple local cart counter (front-end demo)
+    let pcCartCount = 0;
+    const pcCartCountEl = document.getElementById('pcCartCount');
+    function pcAddToCart(productName) {
+      pcCartCount++;
+      pcCartCountEl.textContent = pcCartCount;
+      pcToast(`Added to cart: ${productName}`);
+    }
+
+    // Minimal toast (no dependency)
+    function pcToast(message) {
+      const el = document.createElement('div');
+      el.className = 'pc-flash pc-flash-success';
+      el.style.position = 'fixed';
+      el.style.left = '18px';
+      el.style.bottom = '18px';
+      el.style.zIndex = '9999';
+      el.innerHTML = `<div><strong>Done.</strong><div class="pc-muted-small">${message}</div></div>`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 2200);
+    }
+
+    // Chatbot UI
+    const pcChatPanel = document.getElementById('pcChatPanel');
+    const pcChatBody = document.getElementById('pcChatBody');
+    const pcChatInput = document.getElementById('pcChatInput');
+
+    function pcToggleChat(open) {
+      if (open) pcChatPanel.classList.add('open');
+      else pcChatPanel.classList.remove('open');
+      if (open) setTimeout(() => pcChatInput && pcChatInput.focus(), 50);
+    }
+
+    function pcAppendBubble(text, who) {
+      const b = document.createElement('div');
+      b.className = 'pc-bubble ' + (who === 'me' ? 'me' : 'bot');
+      b.textContent = text;
+      pcChatBody.appendChild(b);
+      pcChatBody.scrollTop = pcChatBody.scrollHeight;
+    }
+
+    // AI auto response (rule-based starter; replace with real AI endpoint later)
+    function pcBotReply(userTextRaw) {
+      const t = (userTextRaw || '').toLowerCase();
+
+      if (t.includes('book') || t.includes('appointment') || t.includes('groom')) {
+        return 'You can book an appointment via “Book Appointment” or go to /bookings/new. If you tell me the service and date, I can guide you.';
+      }
+      if (t.includes('hour') || t.includes('open') || t.includes('closing')) {
+        return 'Our standard opening hours are 10:00 AM to 8:00 PM daily. For holiday hours, please check your outlet page.';
+      }
+      if (t.includes('address') || t.includes('outlet') || t.includes('location')) {
+        return 'We have outlets at Marsiling (730000), Lavender (330000), and Punggol (820000). Scroll to the Outlets section for maps and contact numbers.';
+      }
+      if (t.includes('delivery') || t.includes('shipping')) {
+        return 'Shop delivery is available for selected items. If you share your postal code, we can confirm coverage.';
+      }
+      if (t.includes('refund') || t.includes('cancel') || t.includes('reschedule')) {
+        return 'You may reschedule or cancel from your booking page. For same-day changes, please call the outlet directly.';
+      }
+      return 'Thank you. Please share your pet type (dog/cat), the service you want, and your preferred date/time.';
+    }
+
+    function pcSendChat(e) {
+      e.preventDefault();
+      const text = (pcChatInput.value || '').trim();
+      if (!text) return;
+
+      pcAppendBubble(text, 'me');
+      pcChatInput.value = '';
+
+      // Simulate response
+      setTimeout(() => {
+        pcAppendBubble(pcBotReply(text), 'bot');
+      }, 400);
+    }
+  </script>
+</body>
+
+</html>
