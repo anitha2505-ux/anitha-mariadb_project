@@ -21,11 +21,11 @@
       <div class="row mb-3">
         <div class="col-md-6">
           <label class="form-label">Start Time *</label>
-          <input type="time" name="startTime" class="form-control" value="<%= booking.startTime %>" required>
+          <input type="time" name="startTime" class="form-control" step="1800" value="<%= booking.startTime %>" required>
         </div>
         <div class="col-md-6">
-          <label class="form-label">End Time *</label>
-          <input type="time" name="endTime" class="form-control" value="<%= booking.endTime %>" required>
+          <label class="form-label">End Time</label>
+          <input type="time" name="endTime" class="form-control" step="1800" value="<%= booking.endTime %>" step="1800">
         </div>
       </div>
 

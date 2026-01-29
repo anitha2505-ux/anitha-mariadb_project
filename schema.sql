@@ -227,3 +227,7 @@ ADD UNIQUE KEY uq_owners_phone (phone);
 
 ALTER TABLE pets
 ADD UNIQUE KEY uq_pets_owners_petname (ownerId, petName);
+
+-- change endTime in bookings table to optional, null acceptable
+ALTER TABLE bookings
+MODIFY endTime TIME NULL;

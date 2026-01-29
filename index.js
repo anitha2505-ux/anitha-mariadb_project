@@ -222,7 +222,6 @@ app.post("/bookings/create", async (req, res) => {
         const {
             bookingDate,
             startTime,
-            endTime,
             status,
             petName,
             species,
@@ -231,6 +230,10 @@ app.post("/bookings/create", async (req, res) => {
             ownerEmail,
             ownerPhone
         } = req.body;
+
+        const endTime = req.body.endTime && String(req.body.endTime).trim() !== ""
+        ? req.body.endTime
+        : null;
 
         // services from checklist
         let serviceIds = req.body.serviceIds;
@@ -378,7 +381,6 @@ app.post("/bookings/:bookingId/update", async (req, res) => {
     const {
       bookingDate,
       startTime,
-      endTime,
       status,
       petName,
       species,
@@ -387,6 +389,10 @@ app.post("/bookings/:bookingId/update", async (req, res) => {
       ownerEmail,
       ownerPhone
     } = req.body;
+
+    const endTime = req.body.endTime && String(req.body.endTime).trim() !== ""
+    ? req.body.endTime
+    :null;
 
     // serviceIds sanitise
     let serviceIds = req.body.serviceIds;
