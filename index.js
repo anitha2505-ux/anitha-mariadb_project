@@ -69,9 +69,11 @@ const dbConnection = mysql2.createPool(dbConfig);
 
 // ROUTES
 // home page view
-app.get("/PawfectCare", function (req, res) {
-    res.render('01_home')
-})
+app.get("/", function (req, res) {
+    res.render('01_home', { title: "PawfectCare"});
+});
+
+
 
 // Read from bookings table
 app.get("/bookings", async function (req, res) {

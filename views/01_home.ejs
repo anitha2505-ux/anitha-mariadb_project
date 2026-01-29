@@ -1,37 +1,290 @@
 <!-- views/01_home.ejs -->
-<div class="p-4 p-md-5 bg-white rounded-4 shadow-sm">
-  <div class="row align-items-center g-4">
-    <div class="col-lg-7">
-      <h1 class="display-6 fw-semibold mb-2">PawfectCare</h1>
-      <p class="text-muted mb-4">
-        Admin Dashboard for managing services, bookings, pets, and owners.
-      </p>
 
-      <div class="d-flex flex-wrap gap-2">
-        <a class="btn btn-primary" href="/services">Services</a>
-        <a class="btn btn-primary" href="/bookings">Bookings</a>
-        <a class="btn btn-primary" href="/pets">Pets</a>
-        <a class="btn btn-primary" href="/owners">Owners</a>
-      </div>
+<div class="pc-home">
 
-      <hr class="my-4">
+  <!-- HERO -->
+  <section class="pc-hero pc-card">
+    <div class="pc-hero-grid">
+      <div class="pc-hero-copy">
+        <div class="pc-hero-badge">
+          🐾 Singapore • Lifestyle Petcare
+        </div>
 
-      
-    </div>
+        <h1 class="pc-hero-title">
+          PawfectCare
+        </h1>
 
-    <div class="col-lg-5">
-      <div class="card border-0 shadow-sm rounded-4">
-        <div class="card-body">
-          <h2 class="h5 mb-2">Quick Actions</h2>
-          <p class="text-muted mb-3">Create and manage records efficiently.</p>
-          <div class="d-grid gap-2">
-            <a class="btn btn-success" href="/bookings/new">+ Add New Booking</a>
-            <a class="btn btn-outline-secondary" href="/services">View Services</a>
-            <a class="btn btn-outline-secondary" href="/pets">View Pets</a>
-            <a class="btn btn-outline-secondary" href="/owners">View Owners</a>
+        <p class="pc-hero-subtitle">
+          Classy care, cheerful vibes — grooming, daycare, wellness, and happy tails.
+        </p>
+
+        <div class="pc-hero-cta">
+          <a href="/bookings/new" class="btn btn-primary pc-cta-btn">
+            <i class="bi bi-calendar2-check"></i>
+            <span class="ms-1">Book Appointment</span>
+          </a>
+
+          <a href="/login" class="btn btn-outline-primary pc-cta-btn">
+            <i class="bi bi-person-circle"></i>
+            <span class="ms-1">Member Login</span>
+          </a>
+
+          <a href="/admin/login" class="btn btn-secondary pc-cta-btn">
+            <i class="bi bi-shield-lock"></i>
+            <span class="ms-1">Admin Login</span>
+          </a>
+        </div>
+
+        <div class="pc-hero-mini">
+          <div class="pc-mini-item">
+            <i class="bi bi-stars"></i>
+            <div>
+              <div class="pc-mini-title">Cheerful, modern service</div>
+              <div class="pc-mini-sub">Fast booking, clear status updates</div>
+            </div>
+          </div>
+          <div class="pc-mini-item">
+            <i class="bi bi-heart-pulse"></i>
+            <div>
+              <div class="pc-mini-title">Care-first approach</div>
+              <div class="pc-mini-sub">Notes, allergies, and preferences (V2)</div>
+            </div>
           </div>
         </div>
       </div>
+
+      <div class="pc-hero-media">
+        <!-- Replace this with your actual hero image later -->
+        <div class="pc-hero-image" role="img" aria-label="Happy pets hero image"></div>
+
+        <div class="pc-hero-fun">
+          😄 “Is this a treat? …or a shampoo?”<br>
+          <span>— every dog, probably</span>
+        </div>
+      </div>
     </div>
-  </div>
+  </section>
+
+  <!-- SERVICES CAROUSEL -->
+  <section class="pc-section">
+    <div class="pc-section-head">
+      <h2 class="pc-section-title">Services</h2>
+      <div class="pc-section-sub">Swipe through what we do best 🐶</div>
+    </div>
+
+    <div id="pcServicesCarousel" class="carousel slide pc-card" data-bs-ride="carousel">
+      <div class="carousel-inner">
+
+        <div class="carousel-item active">
+          <div class="pc-carousel-slide">
+            <div class="pc-carousel-img pc-img-1"></div>
+            <div class="pc-carousel-copy">
+              <h3>Grooming</h3>
+              <p>Fresh coats, neat paws, and a confident strut.</p>
+              <a class="btn btn-primary" href="/bookings/new">Book Grooming</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <div class="pc-carousel-slide">
+            <div class="pc-carousel-img pc-img-2"></div>
+            <div class="pc-carousel-copy">
+              <h3>Daycare</h3>
+              <p>Supervised playtime and calm rest zones.</p>
+              <a class="btn btn-primary" href="/bookings/new">Book Daycare</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <div class="pc-carousel-slide">
+            <div class="pc-carousel-img pc-img-3"></div>
+            <div class="pc-carousel-copy">
+              <h3>Wellness</h3>
+              <p>Comfort checks, hygiene routines, and care guidance.</p>
+              <a class="btn btn-primary" href="/bookings/new">Book Wellness</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <button class="carousel-control-prev" type="button" data-bs-target="#pcServicesCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+
+      <button class="carousel-control-next" type="button" data-bs-target="#pcServicesCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+
+      <div class="carousel-indicators pc-carousel-dots">
+        <button type="button" data-bs-target="#pcServicesCarousel" data-bs-slide-to="0" class="active" aria-current="true"></button>
+        <button type="button" data-bs-target="#pcServicesCarousel" data-bs-slide-to="1"></button>
+        <button type="button" data-bs-target="#pcServicesCarousel" data-bs-slide-to="2"></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTS GALLERY (for later ecommerce) -->
+  <section class="pc-section">
+    <div class="pc-section-head">
+      <h2 class="pc-section-title">Products</h2>
+      <div class="pc-section-sub">Gallery now, e-commerce later 🦴</div>
+    </div>
+
+    <div class="pc-grid-4">
+      <% const products = [
+        { name: "Shampoo (Gentle)", price: "$18", icon: "bi-droplet" },
+        { name: "Dental Chews", price: "$12", icon: "bi-emoji-smile" },
+        { name: "Paw Balm", price: "$15", icon: "bi-heart" },
+        { name: "Travel Bottle", price: "$9", icon: "bi-bag" }
+      ]; %>
+
+      <% products.forEach(p => { %>
+        <div class="pc-product pc-card">
+          <div class="pc-product-img">
+            <i class="bi <%= p.icon %>"></i>
+          </div>
+          <div class="pc-product-body">
+            <div class="pc-product-name"><%= p.name %></div>
+            <div class="pc-product-price"><%= p.price %></div>
+            <button class="btn btn-secondary" type="button" disabled>
+              Coming soon
+            </button>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </section>
+
+  <!-- OUTLETS -->
+  <section class="pc-section">
+    <div class="pc-section-head">
+      <h2 class="pc-section-title">Outlets</h2>
+      <div class="pc-section-sub">Find us across Singapore</div>
+    </div>
+
+    <div class="pc-grid-3">
+      <div class="pc-card pc-outlet">
+        <div class="pc-outlet-top">
+          <i class="bi bi-geo-alt"></i>
+          <div>
+            <div class="pc-outlet-name">PawfectCare • Central</div>
+            <div class="pc-outlet-sub">123 Example Rd, #01-01, Singapore</div>
+          </div>
+        </div>
+        <div class="pc-outlet-meta">
+          <div><i class="bi bi-clock"></i> 10am – 8pm</div>
+          <div><i class="bi bi-telephone"></i> +65 6123 4567</div>
+        </div>
+      </div>
+
+      <div class="pc-card pc-outlet">
+        <div class="pc-outlet-top">
+          <i class="bi bi-geo-alt"></i>
+          <div>
+            <div class="pc-outlet-name">PawfectCare • East</div>
+            <div class="pc-outlet-sub">456 Sample Ave, #02-08, Singapore</div>
+          </div>
+        </div>
+        <div class="pc-outlet-meta">
+          <div><i class="bi bi-clock"></i> 10am – 8pm</div>
+          <div><i class="bi bi-telephone"></i> +65 6234 5678</div>
+        </div>
+      </div>
+
+      <div class="pc-card pc-outlet">
+        <div class="pc-outlet-top">
+          <i class="bi bi-geo-alt"></i>
+          <div>
+            <div class="pc-outlet-name">PawfectCare • North</div>
+            <div class="pc-outlet-sub">789 Demo St, #03-12, Singapore</div>
+          </div>
+        </div>
+        <div class="pc-outlet-meta">
+          <div><i class="bi bi-clock"></i> 10am – 8pm</div>
+          <div><i class="bi bi-telephone"></i> +65 6345 6789</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT + FEEDBACK -->
+  <section class="pc-section">
+    <div class="pc-grid-2">
+      <div class="pc-card pc-contact">
+        <div class="pc-section-head">
+          <h2 class="pc-section-title">Contact</h2>
+          <div class="pc-section-sub">We reply fast — like a dog spotting snacks.</div>
+        </div>
+
+        <div class="pc-contact-list">
+          <div class="pc-contact-item">
+            <i class="bi bi-envelope"></i>
+            <div>
+              <div class="pc-contact-label">Email</div>
+              <div class="pc-contact-value">hello@pawfectcare.sg</div>
+            </div>
+          </div>
+
+          <div class="pc-contact-item">
+            <i class="bi bi-telephone"></i>
+            <div>
+              <div class="pc-contact-label">Phone</div>
+              <div class="pc-contact-value">+65 6123 4567</div>
+            </div>
+          </div>
+
+          <div class="pc-contact-item">
+            <i class="bi bi-instagram"></i>
+            <div>
+              <div class="pc-contact-label">Social</div>
+              <div class="pc-contact-value">@pawfectcare</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pc-card pc-feedback">
+        <div class="pc-section-head">
+          <h2 class="pc-section-title">Feedback</h2>
+          <div class="pc-section-sub">Tell us what your pet would say 😄</div>
+        </div>
+
+        <!-- For now: POST to a placeholder route you can implement later -->
+        <form method="POST" action="/feedback" class="pc-form">
+          <div class="mb-3">
+            <label class="form-label">Your Name</label>
+            <input class="form-control" name="name" type="text" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input class="form-control" name="email" type="email" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Message</label>
+            <textarea class="form-control" name="message" rows="4" required></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary pc-cta-btn">
+            <i class="bi bi-send"></i><span class="ms-1">Send Feedback</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="pc-footer">
+    <div class="pc-footer-inner">
+      <div>© <%= new Date().getFullYear() %> PawfectCare • Singapore</div>
+      <div class="pc-footer-note">Made with calm vibes and waggy tails 🐾</div>
+    </div>
+  </footer>
+
 </div>
