@@ -72,43 +72,105 @@ app.get("/PawfectCare", function (req, res) {
 
 // Read from bookings table
 app.get("/bookings", async function (req, res) {
-    const sql = `SELECT 
+  try {
+    // ---- Read filters from query string ----
+    const status = req.query.status?.trim() || "";
+    const dateFrom = req.query.dateFrom?.trim() || "";
+    const dateTo = req.query.dateTo?.trim() || "";
+    const ownerEmail = req.query.ownerEmail?.trim() || "";
+    const serviceId = req.query.serviceId?.trim() || "";
+
+    const filters = { status, dateFrom, dateTo, ownerEmail, serviceId };
+
+    // ✅ SELECT #1 (for dropdown options)
+    const [services] = await dbConnection.query(
+      "SELECT serviceId, serviceName FROM services ORDER BY serviceName"
+    );
+
+    // ✅ SELECT #2 (bookings list with filters)
+    let sql = `
+      SELECT
         b.bookingId,
         b.bookingDate,
         b.startTime,
         b.endTime,
         b.status,
 
-        s.serviceName AS serviceName,
-
         o.firstName AS ownerFirstName,
-        o.lastName AS ownerLastName,
-        o.email AS ownerEmail,
-        o.phone AS ownerPhone,
+        o.lastName  AS ownerLastName,
+        o.email     AS ownerEmail,
+        o.phone     AS ownerPhone,
 
-        p.petName AS petName,
-        p.species AS species
+        p.petName   AS petName,
+        p.species   AS species,
+
+        COALESCE(GROUP_CONCAT(DISTINCT s.serviceName ORDER BY s.serviceName SEPARATOR ', '), 'No Services') AS serviceNames
 
       FROM bookings b
       JOIN owners o ON b.ownerId = o.ownerId
-      JOIN pets p ON b.petId = p.petId
+      JOIN pets p   ON b.petId   = p.petId
       LEFT JOIN bookingServices bs ON b.bookingId = bs.bookingId
-      LEFT JOIN services s ON bs.serviceId = s.serviceId
+      LEFT JOIN services s         ON bs.serviceId = s.serviceId
+    `;
 
-      ORDER BY b.bookingId DESC;`
+    const where = [];
+    const params = [];
 
-    const results = await dbConnection.query(sql);
-    const rows = results[0];
+    if (status) {
+      where.push("b.status = ?");
+      params.push(status);
+    }
+
+    // Date range (best practice: allow From-only, To-only, or both)
+    if (dateFrom) {
+      where.push("b.bookingDate >= ?");
+      params.push(dateFrom);
+    }
+    if (dateTo) {
+      where.push("b.bookingDate <= ?");
+      params.push(dateTo);
+    }
+
+    if (ownerEmail) {
+      where.push("o.email LIKE ?");
+      params.push(`%${ownerEmail}%`);
+    }
+
+    if (serviceId && /^\d+$/.test(serviceId)) {
+      where.push("bs.serviceId = ?");
+      params.push(parseInt(serviceId, 10));
+    }
+
+    if (where.length > 0) {
+      sql += " WHERE " + where.join(" AND ");
+    }
+
+    sql += `
+      GROUP BY
+        b.bookingId, b.bookingDate, b.startTime, b.endTime, b.status,
+        o.firstName, o.lastName, o.email, o.phone,
+        p.petName, p.species
+      ORDER BY b.bookingId DESC
+    `;
+
+    const [rows] = await dbConnection.query(sql, params);
 
     // Flash: read once, then clear
     const flashMessage = req.session.flashMessage || null;
     req.session.flashMessage = null;
 
-    res.render('05_bookings_index', {
-        bookings: rows,
-        flashMessage
-    })
+    res.render("05_bookings_index", {
+      bookings: rows,
+      services,
+      filters,
+      flashMessage
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error loading bookings");
+  }
 });
+
 
 // Route for listing services in Add new booking
 app.get("/bookings/new", async function (req, res) {

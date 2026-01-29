@@ -15,6 +15,57 @@
               <%= flashMessage %>
             </div>
             <% } %>
+
+              <form method="GET" action="/bookings" class="row g-2 mb-3">
+
+                <div class="col-md-2">
+                  <label class="form-label">Status</label>
+                  <select name="status" class="form-select">
+                    <option value="">All</option>
+                    <option value="Pending" <%=filters?.status==="Pending" ? "selected" : "" %>>Pending</option>
+                    <option value="Confirmed" <%=filters?.status==="Confirmed" ? "selected" : "" %>>Confirmed</option>
+                    <option value="Cancelled" <%=filters?.status==="Cancelled" ? "selected" : "" %>>Cancelled</option>
+                  </select>
+                </div>
+
+                <div class="col-md-2">
+                  <label class="form-label">Date From</label>
+                  <input type="date" name="dateFrom" class="form-control" value="<%= filters?.dateFrom || '' %>">
+                </div>
+
+                <div class="col-md-2">
+                  <label class="form-label">Date To</label>
+                  <input type="date" name="dateTo" class="form-control" value="<%= filters?.dateTo || '' %>">
+                </div>
+
+                <div class="col-md-3">
+                  <label class="form-label">Owner Email</label>
+                  <input type="text" name="ownerEmail" class="form-control" placeholder="e.g. gmail"
+                    value="<%= filters?.ownerEmail || '' %>">
+                </div>
+
+                <div class="col-md-3">
+                  <label class="form-label">Service</label>
+                  <select name="serviceId" class="form-select">
+                    <option value="">All</option>
+                    <% (services || []).forEach(s=> { %>
+                      <option value="<%= s.serviceId %>" <%=String(filters?.serviceId || "" )===String(s.serviceId)
+                        ? "selected" : "" %>>
+                        <%= s.serviceName %>
+                      </option>
+                      <% }) %>
+                  </select>
+                </div>
+
+                <div class="col-12 d-flex gap-2 mt-2">
+                  <button type="submit" class="btn btn-primary">Search</button>
+                  <a href="/bookings" class="btn btn-secondary">Reset</a>
+                </div>
+
+              </form>
+
+
+
               <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                   <tr>
@@ -22,7 +73,7 @@
                     <th>Date</th>
                     <th>From</th>
                     <th>To</th>
-                    <th>Service</th>
+                    <th>Services</th>
                     <th>Status</th>
                     <th>Owner First Name</th>
                     <th>Owner Last Name</th>
