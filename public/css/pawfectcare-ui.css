@@ -90,6 +90,10 @@ label.form-label,
   border-bottom: 1px solid rgba(255, 255, 255, .12);
 }
 
+.navbar .nav-link i {
+  vertical-align: -0.12em;
+}
+
 .navbar .navbar-brand {
   font-family: var(--pc-font-h);
   font-weight: 700;
@@ -546,8 +550,8 @@ label.form-label {
    FULL-BLEED HERO SECTION
    ===================================================== */
 .pc-hero-main {
-  width: 100vw;
-  height: calc(100vh - 64px); /* subtract navbar height */
+  width: 120vw;
+  height: calc(100vh - 56px); /* subtract navbar height */
   margin: 0;
   padding: 0;
   background:
@@ -1147,4 +1151,19 @@ body, main, .container-fluid, .container {
   object-fit: contain !important;
   border-radius: 0 !important;
   display: block !important;
+}
+
+/* =========================
+   HERO LOGO – RESPONSIVE
+   ========================= */
+
+.pc-hero-logo {
+  margin-bottom: 14px;
+}
+
+.pc-hero-logo img {
+  width: 140px;
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
 }
