@@ -47,6 +47,7 @@
     var nextOrder = (isActive && currentOrder === "asc") ? "desc" : "asc";
 
     var params = new URLSearchParams();
+    if (filters && filters.q) params.set("q", filters.q);
     if (filters && filters.status) params.set("status", filters.status);
     if (filters && filters.dateFrom) params.set("dateFrom", filters.dateFrom);
     if (filters && filters.dateTo) params.set("dateTo", filters.dateTo);
@@ -65,211 +66,193 @@
   }
 %>
 
+<div class="pc-page-title">
+  <div class="pc-title-left">
+    <div class="pc-title-icon" title="Bookings">
+      <i class="bi bi-calendar2-heart"></i>
+    </div>
+    <h2>Bookings</h2>
+  </div>
 
-    <div class="pc-page-title">
-      <div class="pc-title-left">
-        <div class="pc-title-icon" title="Bookings">
-          <i class="bi bi-calendar2-heart"></i>
+  <a class="btn btn-success pc-icon-btn" href="/bookings/new">
+    <i class="bi bi-plus-circle"></i>
+    <span class="ms-1">Add New Booking</span>
+  </a>
+</div>
+
+<div class="pc-card pc-section">
+  <div class="pc-card-body">
+
+    <% if (flashMessage) { %>
+      <div class="pc-flash pc-flash-success mb-3">
+        <div class="pc-flash-emoji">🐶</div>
+        <div>
+          <strong>All paws up!</strong>
+          <div><%= flashMessage %></div>
         </div>
-        <h2>Bookings</h2>
       </div>
+    <% } %>
 
-      <a class="btn btn-success pc-icon-btn" href="/bookings/new">
-        <i class="bi bi-plus-circle"></i>
-        <span class="ms-1">Add New Booking</span>
-      </a>
-    </div>
+    <% if (!bookings || bookings.length === 0) { %>
+      <div class="pc-flash pc-flash-info">
+        <div class="pc-flash-emoji">🐾</div>
+        <div>
+          <strong>Nap time.</strong>
+          <div class="pc-muted">No bookings found yet.</div>
+        </div>
+      </div>
+    <% } else { %>
 
-    <div class="pc-card pc-section">
-      <div class="pc-card-body">
-
-        <% if (flashMessage) { %>
-          <div class="pc-flash pc-flash-success mb-3">
-            <div class="pc-flash-emoji">🐶</div>
-            <div>
-              <strong>All paws up!</strong>
-              <div>
-                <%= flashMessage %>
-              </div>
-            </div>
+      <!-- Filters -->
+      <div class="pc-card pc-section" style="box-shadow:none;">
+        <div class="pc-card-header">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-funnel"></i>
+            <strong style="font-family: var(--pc-font-h);">Search & Filters</strong>
+            <span class="pc-muted ms-2">Find bookings fast.</span>
           </div>
-          <% } %>
+        </div>
 
-            <% if (!bookings || bookings.length===0) { %>
-              <div class="pc-flash pc-flash-info">
-                <div class="pc-flash-emoji">🐾</div>
-                <div>
-                  <strong>Nap time.</strong>
-                  <div class="pc-muted">No bookings found yet.</div>
-                </div>
-              </div>
+        <div class="pc-card-body">
+          <form method="GET" action="/bookings" class="pc-filter-bar">
 
-              <% } else { %>
+            <input type="hidden" name="sort" value="<%= filters?.sort || '' %>">
+            <input type="hidden" name="order" value="<%= filters?.order || 'asc' %>">
 
-                <!-- Filters -->
-                <div class="pc-card pc-section" style="box-shadow:none;">
-                  <div class="pc-card-header">
-                    <div class="d-flex align-items-center gap-2">
-                      <i class="bi bi-funnel"></i>
-                      <strong style="font-family: var(--pc-font-h);">Search & Filters</strong>
-                      <span class="pc-muted ms-2">Find bookings fast.</span>
-                    </div>
-                  </div>
+            <!-- ✅ Search -->
+            <div class="pc-filter-item">
+              <label class="form-label">Search</label>
+              <input
+                type="text"
+                name="q"
+                class="form-control"
+                placeholder="Booking ID, owner, pet, email, phone, service..."
+                value="<%= filters?.q || '' %>"
+              >
+            </div>
 
-                  <div class="pc-card-body">
-                    <form method="GET" action="/bookings" class="pc-filter-bar">
+            <div class="pc-filter-item small">
+              <label class="form-label">Status</label>
+              <select name="status" class="form-select">
+                <option value="">All</option>
+                <option value="Pending" <%= (filters?.status === "Pending") ? "selected" : "" %>>Pending</option>
+                <option value="Confirmed" <%= (filters?.status === "Confirmed") ? "selected" : "" %>>Confirmed</option>
+                <option value="Cancelled" <%= (filters?.status === "Cancelled") ? "selected" : "" %>>Cancelled</option>
+              </select>
+            </div>
 
-                      <input type="hidden" name="sort" value="<%= filters?.sort || '' %>">
-                      <input type="hidden" name="order" value="<%= filters?.order || 'asc' %>">
+            <div class="pc-filter-item small">
+              <label class="form-label">Date From</label>
+              <input type="date" name="dateFrom" class="form-control" value="<%= filters?.dateFrom || '' %>">
+            </div>
 
-                      <div class="pc-filter-item small">
-                        <label class="form-label">Status</label>
-                        <select name="status" class="form-select">
-                          <option value="">All</option>
-                          <option value="Pending" <%=filters?.status==="Pending" ? "selected" : "" %>>Pending</option>
-                          <option value="Confirmed" <%=filters?.status==="Confirmed" ? "selected" : "" %>>Confirmed
-                          </option>
-                          <option value="Cancelled" <%=filters?.status==="Cancelled" ? "selected" : "" %>>Cancelled
-                          </option>
-                        </select>
-                      </div>
+            <div class="pc-filter-item small">
+              <label class="form-label">Date To</label>
+              <input type="date" name="dateTo" class="form-control" value="<%= filters?.dateTo || '' %>">
+            </div>
 
-                      <div class="pc-filter-item small">
-                        <label class="form-label">Date From</label>
-                        <input type="date" name="dateFrom" class="form-control" value="<%= filters?.dateFrom || '' %>">
-                      </div>
+            <div class="pc-filter-item">
+              <label class="form-label">Owner Email</label>
+              <input type="text" name="ownerEmail" class="form-control" placeholder="e.g. gmail"
+                value="<%= filters?.ownerEmail || '' %>">
+            </div>
 
-                      <div class="pc-filter-item small">
-                        <label class="form-label">Date To</label>
-                        <input type="date" name="dateTo" class="form-control" value="<%= filters?.dateTo || '' %>">
-                      </div>
+            <div class="pc-filter-item">
+              <label class="form-label">Service</label>
+              <select name="serviceId" class="form-select">
+                <option value="">All</option>
+                <% (services || []).forEach(function(s) { %>
+                  <option value="<%= s.serviceId %>" <%= String(filters?.serviceId || "") === String(s.serviceId) ? "selected" : "" %>>
+                    <%= s.serviceName %>
+                  </option>
+                <% }) %>
+              </select>
+            </div>
 
-                      <div class="pc-filter-item">
-                        <label class="form-label">Owner Email</label>
-                        <input type="text" name="ownerEmail" class="form-control" placeholder="e.g. gmail"
-                          value="<%= filters?.ownerEmail || '' %>">
-                      </div>
+            <div class="pc-filter-actions">
+              <button type="submit" class="btn btn-primary pc-icon-btn">
+                <i class="bi bi-search"></i><span class="ms-1">Search</span>
+              </button>
+              <a href="/bookings" class="btn btn-secondary pc-icon-btn">
+                <i class="bi bi-arrow-counterclockwise"></i><span class="ms-1">Reset</span>
+              </a>
+            </div>
 
-                      <div class="pc-filter-item">
-                        <label class="form-label">Service</label>
-                        <select name="serviceId" class="form-select">
-                          <option value="">All</option>
-                          <% (services || []).forEach(s=> { %>
-                            <option value="<%= s.serviceId %>" <%=String(filters?.serviceId || ""
-                              )===String(s.serviceId) ? "selected" : "" %>>
-                              <%= s.serviceName %>
-                            </option>
-                            <% }) %>
-                        </select>
-                      </div>
-
-                      <div class="pc-filter-actions">
-                        <button type="submit" class="btn btn-primary pc-icon-btn">
-                          <i class="bi bi-search"></i><span class="ms-1">Search</span>
-                        </button>
-                        <a href="/bookings" class="btn btn-secondary pc-icon-btn">
-                          <i class="bi bi-arrow-counterclockwise"></i><span class="ms-1">Reset</span>
-                        </a>
-                      </div>
-
-                    </form>
-                  </div>
-                </div>
-
-
-                <!-- Table -->
-                <div class="pc-table-wrap">
-                  <div class="pc-table-scroll">
-                    <table class="table table-hover align-middle">
-                      <thead>
-                        <tr>
-                          <th class="pc-nowrap">
-                            <a href="<%= sortLink('bookingId') %>">
-                              Booking ID<%= sortIcon('bookingId') %>
-                            </a>
-                          </th>
-                          <th class="pc-nowrap">
-                            <a href="<%= sortLink('bookingDate') %>">
-                              Date<%= sortIcon('bookingDate') %>
-                            </a>
-                          </th>
-                          <th>Time</th>
-                          <th>Services</th>
-                          <th class="pc-nowrap">
-                            <a href="<%= sortLink('status') %>">
-                              Status<%= sortIcon('status') %>
-                            </a>
-                          </th>
-                          <th>
-                            <a href="<%= sortLink('ownerName') %>">
-                              Owner<%= sortIcon('ownerName') %>
-                            </a>
-                          </th>
-                          <th>
-                            <a href="<%= sortLink('petName') %>">
-                              Pet<%= sortIcon('petName') %>
-                            </a>
-                          </th>
-                          <th>Email</th>
-                          <th>Phone</th>
-                          <th class="text-end">Actions</th>
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        <% bookings.forEach(b=> { %>
-                          <tr>
-                            <td>
-                              <%= b.bookingId %>
-                            </td>
-                            <td class="pc-nowrap">
-                              <%= b.bookingDate ? String(b.bookingDate).slice(0,10) : "-" %>
-                            </td>
-                            <td class="pc-nowrap">
-                              <%= formatTime12h(b.startTime) %> – <%= formatTime12h(b.endTime) %>
-                            </td>
-                            <td>
-                              <%- formatServicesWithBullets(b.serviceNames) %>
-                            </td>
-
-                            <td>
-                              <span class="pc-status pc-status-<%= b.status %>">
-                                <%= b.status %>
-                              </span>
-                            </td>
-
-                            <td>
-                              <%= b.ownerFirstName %>
-                                <%= b.ownerLastName %>
-                            </td>
-                            <td>
-                              <%= b.petName %> (<%= b.species %>)
-                            </td>
-                            <td>
-                              <%= b.ownerEmail %>
-                            </td>
-                            <td>
-                              <%= b.ownerPhone %>
-                            </td>
-
-                            <td class="text-end">
-                              <div class="pc-action-group">
-                                <a href="/bookings/<%= b.bookingId %>/edit" class="pc-action edit" title="Edit">
-                                  <i class="bi bi-pencil"></i>
-                                </a>
-                                <a href="/bookings/<%= b.bookingId %>/delete" class="pc-action delete" title="Delete">
-                                  <i class="bi bi-trash"></i>
-                                </a>
-                              </div>
-                            </td>
-                          </tr>
-                          <% }) %>
-                      </tbody>
-
-                    </table>
-                  </div>
-                </div>
-
-                <% } %>
+          </form>
+        </div>
       </div>
-    </div>
+
+      <!-- Table -->
+      <div class="pc-table-wrap">
+        <div class="pc-table-scroll">
+          <table class="table table-hover align-middle">
+            <thead>
+              <tr>
+                <th class="pc-nowrap">
+                  <a href="<%= sortLink('bookingId') %>">
+                    Booking ID<%= sortIcon('bookingId') %>
+                  </a>
+                </th>
+                <th class="pc-nowrap">
+                  <a href="<%= sortLink('bookingDate') %>">
+                    Date<%= sortIcon('bookingDate') %>
+                  </a>
+                </th>
+                <th>Time</th>
+                <th>Services</th>
+                <th class="pc-nowrap">
+                  <a href="<%= sortLink('status') %>">
+                    Status<%= sortIcon('status') %>
+                  </a>
+                </th>
+                <th>
+                  <a href="<%= sortLink('ownerName') %>">
+                    Owner<%= sortIcon('ownerName') %>
+                  </a>
+                </th>
+                <th>
+                  <a href="<%= sortLink('petName') %>">
+                    Pet<%= sortIcon('petName') %>
+                  </a>
+                </th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% bookings.forEach(function(b) { %>
+                <tr>
+                  <td><%= b.bookingId %></td>
+                  <td class="pc-nowrap"><%= b.bookingDate ? String(b.bookingDate).slice(0,10) : "-" %></td>
+                  <td class="pc-nowrap"><%= formatTime12h(b.startTime) %> – <%= formatTime12h(b.endTime) %></td>
+                  <td><%- formatServicesWithBullets(b.serviceNames) %></td>
+                  <td>
+                    <span class="pc-status pc-status-<%= b.status %>"><%= b.status %></span>
+                  </td>
+                  <td><%= b.ownerFirstName %> <%= b.ownerLastName %></td>
+                  <td><%= b.petName %> (<%= b.species %>)</td>
+                  <td><%= b.ownerEmail %></td>
+                  <td><%= b.ownerPhone %></td>
+                  <td class="text-end">
+                    <div class="pc-action-group">
+                      <a href="/bookings/<%= b.bookingId %>/edit" class="pc-action edit" title="Edit">
+                        <i class="bi bi-pencil"></i>
+                      </a>
+                      <a href="/bookings/<%= b.bookingId %>/delete" class="pc-action delete" title="Delete">
+                        <i class="bi bi-trash"></i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+
+          </table>
+        </div>
+      </div>
+
+    <% } %>
+  </div>
+</div>
