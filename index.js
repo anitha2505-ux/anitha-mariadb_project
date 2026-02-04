@@ -76,11 +76,16 @@ app.get("/", function (req, res) {
   res.render("01_home", { title: "PawfectCare" });
 });
 
+// Admin Dashboard Landing
+app.get("/admin", function(req,res){
+  res.render("12_landing", { title: "Dashboard"})
+})
+
 // Read from bookings table
 app.get("/bookings", async function (req, res) {
   try {
     // ---- Read filters from query string ----
-    const q = req.query.q?.trim() || ""; // ✅ search term
+    const q = req.query.q?.trim() || ""; 
     const status = req.query.status?.trim() || "";
     const dateFrom = req.query.dateFrom?.trim() || "";
     const dateTo = req.query.dateTo?.trim() || "";
@@ -91,12 +96,12 @@ app.get("/bookings", async function (req, res) {
 
     const filters = { q, status, dateFrom, dateTo, ownerEmail, serviceId, sort, order };
 
-    // ✅ SELECT #1 (for dropdown options)
+    // SELECT #1 (for dropdown options)
     const [services] = await dbConnection.query(
       "SELECT serviceId, serviceName FROM services ORDER BY serviceName"
     );
 
-    // ✅ SELECT #2 (bookings list with filters)
+    // SELECT #2 (bookings list with filters)
     let sql = `
       SELECT
         b.bookingId,
@@ -150,7 +155,7 @@ app.get("/bookings", async function (req, res) {
       params.push(parseInt(serviceId, 10));
     }
 
-    // ✅ Search function (MUST be inside this route)
+    // Search function 
     if (q) {
       // If numeric, allow direct bookingId match
       if (/^\d+$/.test(q)) {
