@@ -24,7 +24,7 @@ app.set("views", "./views");
 
 //layout setup
 app.use(expressLayouts);
-app.set("layout", "03_layout");
+app.set("layout", "layout");
 
 // enables form processing on the server side
 app.use(
@@ -33,7 +33,7 @@ app.use(
   })
 );
 
-// enables flash messages on session - middleware
+// enables flash messages on session 
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -73,12 +73,12 @@ const dbConnection = mysql2.createPool(dbConfig);
 // ROUTES
 // home page view
 app.get("/", function (req, res) {
-  res.render("01_home", { title: "PawfectCare" });
+  res.render("home", { title: "PawfectCare" });
 });
 
 // Admin Dashboard Landing
 app.get("/admin", function(req,res){
-  res.render("12_landing", { title: "Dashboard"})
+  res.render("landing", { title: "Dashboard"})
 })
 
 // Read from bookings table
@@ -198,7 +198,7 @@ app.get("/bookings", async function (req, res) {
     const flashMessage = req.session.flashMessage || null;
     req.session.flashMessage = null;
 
-    res.render("05_bookings_index", {
+    res.render("bookings_index", {
       bookings: rows,
       services,
       filters,
@@ -216,7 +216,7 @@ app.get("/bookings/new", async function (req, res) {
   const results = await dbConnection.query(sql);
   const rows = results[0];
 
-  res.render("06_bookings_new", {
+  res.render("bookings_new", {
     services: rows,
   });
 });
@@ -227,7 +227,7 @@ app.get("/services", async function (req, res) {
   const results = await dbConnection.query(sql);
   const rows = results[0];
 
-  res.render("11_services_index", {
+  res.render("services_index", {
     services: rows,
   });
 });
@@ -238,7 +238,7 @@ app.get("/pets", async function (req, res) {
   const results = await dbConnection.query(sql);
   const rows = results[0];
 
-  res.render("10_pets_index", {
+  res.render("pets_index", {
     pets: rows,
   });
 });
@@ -249,7 +249,7 @@ app.get("/owners", async function (req, res) {
   const results = await dbConnection.query(sql);
   const rows = results[0];
 
-  res.render("09_owners_index", {
+  res.render("owners_index", {
     owners: rows,
   });
 });
@@ -398,7 +398,7 @@ app.get("/bookings/:bookingId/edit", async (req, res) => {
     );
     const selectedServiceIds = selectedRows.map((r) => r.serviceId);
 
-    res.render("07_bookings_edit", {
+    res.render("bookings_edit", {
       booking: bookingRows[0],
       services,
       selectedServiceIds,
@@ -523,7 +523,7 @@ app.get("/bookings/:bookingId/delete", async (req, res) => {
 
     if (rows.length === 0) return res.status(404).send("Booking not found");
 
-    res.render("08_bookings_delete", { booking: rows[0] });
+    res.render("bookings_delete", { booking: rows[0] });
   } catch (err) {
     console.error(err);
     res.status(500).send("Error loading delete confirmation");
