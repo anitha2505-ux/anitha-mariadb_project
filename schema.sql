@@ -231,3 +231,15 @@ ADD UNIQUE KEY uq_pets_owners_petname (ownerId, petName);
 -- change endTime in bookings table to optional, null acceptable
 ALTER TABLE bookings
 MODIFY endTime TIME NULL;
+
+-- CAPSTONE PROJECT TABLES CREATION AND MODIFICATION OF EXISTING TABLES TO MAKE IT A FULL PROJECT
+
+CREATE TABLE IF NOT EXISTS roles (
+    roleId BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    roleName VARCHAR(30) NOT NULL,
+    description VARCHAR(255) NULL,
+    createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (roleId),
+    UNIQUE KEY uqRolesRoleName (roleName)
+) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
